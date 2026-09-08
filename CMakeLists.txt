@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(Qt6 6.6 REQUIRED COMPONENTS Quick QuickDialogs2)
+find_package(Qt6 6.8 REQUIRED COMPONENTS Quick QuickDialogs2)
 
 include(FetchContent)
 set(BUILD_MD2HTML_EXECUTABLE OFF CACHE BOOL "" FORCE)
@@ -21,7 +21,7 @@ FetchContent_Declare(md4c
 )
 FetchContent_MakeAvailable(md4c)
 
-qt_standard_project_setup(REQUIRES 6.6)
+qt_standard_project_setup(REQUIRES 6.8)
 qt_policy(SET QTP0004 NEW)
 
 qt_add_executable(FlashRead
@@ -45,10 +45,27 @@ target_link_libraries(FlashRead PRIVATE Qt6::Quick Qt6::QuickDialogs2 md4c-html)
 
 set_target_properties(FlashRead PROPERTIES
     WIN32_EXECUTABLE TRUE
+    MACOSX_BUNDLE TRUE
+    MACOSX_BUNDLE_GUI_IDENTIFIER "org.flashread.FlashRead"
+    MACOSX_BUNDLE_BUNDLE_NAME "FlashRead"
+    MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
 )
+
+if(APPLE)
+    set_target_properties(FlashRead PROPERTIES
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/packaging/macos/Info.plist.in"
+    )
+endif()
 
 include(GNUInstallDirs)
 install(TARGETS FlashRead
     BUNDLE DESTINATION .
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+qt_generate_deploy_qml_app_script(
+    TARGET FlashRead
+    OUTPUT_SCRIPT deploy_script
+)
+install(SCRIPT ${deploy_script})
