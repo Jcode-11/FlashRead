@@ -60,7 +60,11 @@ ApplicationWindow {
             + "a { color:" + theme.accent + "; }"
             + "hr { color:" + theme.border + "; }"
             + "</style>"
-        return css + "<div>" + documentController.renderedContent + "</div>"
+        let content = documentController.renderedContent;
+        if (content.indexOf("image://diagram/") !== -1) {
+            content = content.replace(/image:\/\/diagram\/([a-f0-9]+)/g, "image://diagram/$1?theme=" + workspaceController.themeId);
+        }
+        return css + "<div>" + content + "</div>"
     }
 
     property var theme: themeFor(workspaceController.themeId)

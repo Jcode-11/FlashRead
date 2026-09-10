@@ -1,5 +1,6 @@
 #include "DocumentController.h"
 #include "WorkspaceController.h"
+#include "diagram/DiagramImageProvider.h"
 
 #include <QFileOpenEvent>
 #include <QFontDatabase>
@@ -35,7 +36,7 @@ protected:
 private:
     WorkspaceController *m_workspace;
 };
-}
+} // namespace
 
 int main(int argc, char *argv[])
 {
@@ -49,6 +50,7 @@ int main(int argc, char *argv[])
     app.installEventFilter(&fileOpenHandler);
 
     QQmlApplicationEngine engine;
+    engine.addImageProvider("diagram", new Diagram::DiagramImageProvider());
     engine.rootContext()->setContextProperty("systemFontFamily",
         QFontDatabase::systemFont(QFontDatabase::GeneralFont).family());
     engine.rootContext()->setContextProperty("monospaceFontFamily",
