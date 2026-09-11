@@ -5,6 +5,7 @@
 #include <QFileOpenEvent>
 #include <QFontDatabase>
 #include <QGuiApplication>
+#include <QIcon>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QTimer>
@@ -43,6 +44,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     app.setOrganizationName("FlashRead");
     app.setApplicationName("FlashRead");
+    app.setWindowIcon(QIcon(":/FlashRead/resources/FlashRead.png"));
 
     DocumentController documentController;
     WorkspaceController workspaceController(&documentController);

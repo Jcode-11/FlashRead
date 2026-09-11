@@ -38,6 +38,11 @@ set(DIAGRAM_SOURCES
     src/diagram/DiagramImageProvider.cpp
 )
 
+set(PLATFORM_SOURCES "")
+if(WIN32)
+    set(PLATFORM_SOURCES resources/FlashRead.rc)
+endif()
+
 qt_add_executable(FlashRead
     src/DocumentController.cpp
     src/DocumentController.h
@@ -47,6 +52,7 @@ qt_add_executable(FlashRead
     src/WorkspaceController.h
     src/main.cpp
     ${DIAGRAM_SOURCES}
+    ${PLATFORM_SOURCES}
 )
 
 qt_add_qml_module(FlashRead
@@ -54,6 +60,8 @@ qt_add_qml_module(FlashRead
     VERSION 1.0
     QML_FILES
         qml/Main.qml
+    RESOURCES
+        resources/FlashRead.png
 )
 
 target_link_libraries(FlashRead PRIVATE Qt6::Quick Qt6::QuickDialogs2 Qt6::Svg md4c-html)
@@ -82,6 +90,12 @@ add_executable(test_diagram
 )
 target_include_directories(test_diagram PRIVATE src)
 target_link_libraries(test_diagram PRIVATE Qt6::Gui Qt6::Svg Qt6::Quick md4c-html)
+
+# Icon generator tool
+add_executable(generate_icon
+    tools/generate_icon.cpp
+)
+target_link_libraries(generate_icon PRIVATE Qt6::Gui Qt6::Svg)
 
 include(GNUInstallDirs)
 install(TARGETS FlashRead
