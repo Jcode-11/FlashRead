@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls.Basic
 import QtQuick.Dialogs
 import QtQuick.Layouts
+import FlashRead.WebView 1.0
 
 ApplicationWindow {
     id: window
@@ -16,55 +17,75 @@ ApplicationWindow {
 
     function themeFor(id) {
         if (id === "github-dark") {
-            return { window: "#171816", chrome: "#20211e", panel: "#1c1d1a", reader: "#171816",
-                border: "#363832", text: "#e6e7e1", muted: "#9b9d94", accent: "#79b68f",
-                hover: "#292b26", pressed: "#34362f", drop: "#1d3427", scroll: "#85887e",
-                code: "#20211e", quote: "#20211e", table: "#1d1e1b" }
+            return { window: "#0d1117", chrome: "#161b22", panel: "#161b22", reader: "#0d1117",
+                border: "#30363d", text: "#e6edf3", muted: "#848d97", accent: "#2f81f7",
+                hover: "#21262d", pressed: "#30363d", drop: "#161b22", scroll: "#30363d",
+                code: "#161b22", codeBorder: "#30363d", codeHeader: "#1c2128", codeLineBorder: "#262c36", quote: "#161b22", table: "#161b22",
+                hlK: "#ff7b72", hlT: "#ffa657", hlS: "#a5d6ff", hlC: "#8b949e", hlN: "#79c0ff",
+                hlF: "#d2a8ff", hlP: "#ff7b72", hlKey: "#7ee787", hlConst: "#79c0ff",
+                hlDiffAdd: "#7ee787", hlDiffDel: "#ffa198", hlDiffHdr: "#d2a8ff" }
+        }
+        if (id === "dracula") {
+            return { window: "#282a36", chrome: "#21222c", panel: "#21222c", reader: "#282a36",
+                border: "#44475a", text: "#f8f8f2", muted: "#6272a4", accent: "#bd93f9",
+                hover: "#343746", pressed: "#44475a", drop: "#21222c", scroll: "#44475a",
+                code: "#1e1f29", codeBorder: "#44475a", codeHeader: "#242633", codeLineBorder: "#343746", quote: "#21222c", table: "#21222c",
+                hlK: "#ff79c6", hlT: "#8be9fd", hlS: "#f1fa8c", hlC: "#6272a4", hlN: "#bd93f9",
+                hlF: "#50fa7b", hlP: "#ffb86c", hlKey: "#ff79c6", hlConst: "#bd93f9",
+                hlDiffAdd: "#50fa7b", hlDiffDel: "#ff5555", hlDiffHdr: "#bd93f9" }
+        }
+        if (id === "nord") {
+            return { window: "#2e3440", chrome: "#3b4252", panel: "#3b4252", reader: "#2e3440",
+                border: "#434c5e", text: "#eceff4", muted: "#7b88a1", accent: "#88c0d0",
+                hover: "#434c5e", pressed: "#4c566a", drop: "#3b4252", scroll: "#434c5e",
+                code: "#242933", codeBorder: "#434c5e", codeHeader: "#2b303c", codeLineBorder: "#353c4a", quote: "#3b4252", table: "#3b4252",
+                hlK: "#81a1c1", hlT: "#8fbcbb", hlS: "#a3be8c", hlC: "#616e88", hlN: "#b48ead",
+                hlF: "#88c0d0", hlP: "#d8dee9", hlKey: "#81a1c1", hlConst: "#b48ead",
+                hlDiffAdd: "#a3be8c", hlDiffDel: "#bf616a", hlDiffHdr: "#88c0d0" }
+        }
+        if (id === "one-dark") {
+            return { window: "#282c34", chrome: "#21252b", panel: "#21252b", reader: "#282c34",
+                border: "#3e4451", text: "#abb2bf", muted: "#5c6370", accent: "#61afef",
+                hover: "#2c313a", pressed: "#3e4451", drop: "#21252b", scroll: "#3e4451",
+                code: "#1e2227", codeBorder: "#3e4451", codeHeader: "#23272e", codeLineBorder: "#2c313a", quote: "#21252b", table: "#21252b",
+                hlK: "#c678dd", hlT: "#e5c07b", hlS: "#98c379", hlC: "#5c6370", hlN: "#d19a66",
+                hlF: "#61afef", hlP: "#e06c75", hlKey: "#e06c75", hlConst: "#d19a66",
+                hlDiffAdd: "#98c379", hlDiffDel: "#e06c75", hlDiffHdr: "#c678dd" }
+        }
+        if (id === "vitepress") {
+            return { window: "#ffffff", chrome: "#f6f6f7", panel: "#f6f6f7", reader: "#ffffff",
+                border: "#e2e2e3", text: "#213547", muted: "#606067", accent: "#10b981",
+                hover: "#f1f1f2", pressed: "#e2e2e3", drop: "#f6f6f7", scroll: "#e2e2e3",
+                code: "#f6f8fa", codeBorder: "#e2e8f0", codeHeader: "#eef0f3", codeLineBorder: "#e2e8f0", quote: "#f6f6f7", table: "#f6f6f7",
+                hlK: "#cf222e", hlT: "#10b981", hlS: "#0a3069", hlC: "#64748b", hlN: "#0550ae",
+                hlF: "#8250df", hlP: "#10b981", hlKey: "#10b981", hlConst: "#0550ae",
+                hlDiffAdd: "#10b981", hlDiffDel: "#ef4444", hlDiffHdr: "#8250df" }
         }
         if (id === "vscode-dark") {
-            return { window: "#181818", chrome: "#222222", panel: "#1e1e1e", reader: "#1e1e1e",
-                border: "#3c3c3c", text: "#d4d4d4", muted: "#9d9d9d", accent: "#3794ff",
-                hover: "#2a2d2e", pressed: "#37373d", drop: "#15395b", scroll: "#797979",
-                code: "#252526", quote: "#252526", table: "#252526" }
+            return { window: "#1e1e1e", chrome: "#252526", panel: "#252526", reader: "#1e1e1e",
+                border: "#3c3c3c", text: "#cccccc", muted: "#858585", accent: "#007acc",
+                hover: "#2a2d2e", pressed: "#37373d", drop: "#252526", scroll: "#424242",
+                code: "#1e1e1e", codeBorder: "#333333", codeHeader: "#252526", codeLineBorder: "#2a2d2e", quote: "#252526", table: "#252526",
+                hlK: "#569cd6", hlT: "#4ec9b0", hlS: "#ce9178", hlC: "#6a9955", hlN: "#b5cea8",
+                hlF: "#dcdcaa", hlP: "#c586c0", hlKey: "#9cdcfe", hlConst: "#569cd6",
+                hlDiffAdd: "#89d185", hlDiffDel: "#f48771", hlDiffHdr: "#c586c0" }
         }
         if (id === "paper") {
-            return { window: "#f3eddf", chrome: "#ece3d1", panel: "#f7f0e1", reader: "#fffaf0",
+            return { window: "#fffaf0", chrome: "#f7f0e1", panel: "#f7f0e1", reader: "#fffaf0",
                 border: "#d7c9b4", text: "#3b3228", muted: "#76695a", accent: "#9a5b2d",
-                hover: "#e9ddc7", pressed: "#dfcdae", drop: "#f1dfbf", scroll: "#ad9474",
-                code: "#f1e8d8", quote: "#f6eddd", table: "#f8f0e2" }
+                hover: "#ece1ce", pressed: "#dfcdae", drop: "#f7f0e1", scroll: "#d7c9b4",
+                code: "#f4ece0", codeBorder: "#d8ccb5", codeHeader: "#e9decb", codeLineBorder: "#ded2bd", quote: "#f7f0e1", table: "#f7f0e1",
+                hlK: "#b82424", hlT: "#8f5902", hlS: "#1b7340", hlC: "#8c7e6d", hlN: "#c24e00",
+                hlF: "#7030a0", hlP: "#9c27b0", hlKey: "#1b7340", hlConst: "#b82424",
+                hlDiffAdd: "#1b7340", hlDiffDel: "#b82424", hlDiffHdr: "#7030a0" }
         }
-        return { window: "#f8f8f5", chrome: "#f0f0ec", panel: "#f3f3ef", reader: "#f8f8f5",
-            border: "#dfdfd8", text: "#242520", muted: "#74766d", accent: "#2f6b4f",
-            hover: "#e8e9e2", pressed: "#dcddd5", drop: "#e5f1e9", scroll: "#989990",
-            code: "#efefeb", quote: "#f0f1eb", table: "#f2f2ee" }
-    }
-
-    function documentHtml() {
-        const css = "<style>"
-            + "body { color:" + theme.text + "; font-family:'" + systemFontFamily + "'; font-size:15px; line-height:1.62; }"
-            + "p { margin-top:0; margin-bottom:18px; }"
-            + "h1 { font-size:28px; margin-top:0; margin-bottom:22px; padding-bottom:12px; border-bottom:1px solid " + theme.border + "; }"
-            + "h2 { font-size:22px; margin-top:34px; margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid " + theme.border + "; }"
-            + "h3 { font-size:18px; margin-top:28px; margin-bottom:12px; }"
-            + "h4, h5, h6 { margin-top:24px; margin-bottom:10px; }"
-            + "ul, ol { margin-top:0; margin-bottom:18px; }"
-            + "li { margin-bottom:6px; }"
-            + "blockquote { margin:0 0 18px 0; padding:10px 14px; color:" + theme.muted
-            + "; background-color:" + theme.quote + "; border-left:4px solid " + theme.accent + "; }"
-            + "pre { margin:0 0 18px 0; padding:14px; background-color:" + theme.code
-            + "; border:1px solid " + theme.border + "; font-family:'" + monospaceFontFamily + "', monospace; line-height:1.45; }"
-            + "code { font-family:'" + monospaceFontFamily + "', monospace; background-color:" + theme.code + "; }"
-            + "table { margin:0 0 18px 0; border:1px solid " + theme.border + "; border-collapse:collapse; }"
-            + "th { background-color:" + theme.table + "; font-weight:bold; }"
-            + "td, th { padding:8px; border:1px solid " + theme.border + "; }"
-            + "a { color:" + theme.accent + "; }"
-            + "hr { color:" + theme.border + "; }"
-            + "</style>"
-        let content = documentController.renderedContent;
-        if (content.indexOf("image://diagram/") !== -1) {
-            content = content.replace(/image:\/\/diagram\/([a-f0-9]+)/g, "image://diagram/$1?theme=" + workspaceController.themeId);
-        }
-        return css + "<div>" + content + "</div>"
+        return { window: "#ffffff", chrome: "#f6f8fa", panel: "#f6f8fa", reader: "#ffffff",
+            border: "#d0d7de", text: "#1f2328", muted: "#656d76", accent: "#0969da",
+            hover: "#eaeef2", pressed: "#d0d7de", drop: "#f6f8fa", scroll: "#d0d7de",
+            code: "#f8fafc", codeBorder: "#e2e8f0", codeHeader: "#f1f5f9", codeLineBorder: "#e2e8f0", quote: "#f8fafc", table: "#f8fafc",
+            hlK: "#cf222e", hlT: "#953800", hlS: "#0a3069", hlC: "#64748b", hlN: "#0550ae",
+            hlF: "#8250df", hlP: "#cf222e", hlKey: "#116329", hlConst: "#0550ae",
+            hlDiffAdd: "#15803d", hlDiffDel: "#b91c1c", hlDiffHdr: "#8250df" }
     }
 
     property var theme: themeFor(workspaceController.themeId)
@@ -72,7 +93,8 @@ ApplicationWindow {
     property bool outlineManuallyClosed: false
     property bool hasOutline: documentController.outline.length > 0
     property bool outlineVisible: hasOutline && !outlineManuallyClosed
-    property bool recentExpanded: false
+    property bool recentExpanded: true
+    property real outlineWidth: 224
     color: theme.window
 
     function activateHistoryItem(item) {
@@ -90,7 +112,6 @@ ApplicationWindow {
         target: documentController
         function onDocumentChanged() {
             outlineManuallyClosed = false
-            readerScroll.contentY = 0
         }
     }
 
@@ -126,32 +147,9 @@ ApplicationWindow {
         }
     }
 
-    component OutlineToggle: Button {
-        id: control
-        implicitWidth: 30
-        implicitHeight: 30
-        ToolTip.visible: control.hovered
-        ToolTip.text: outlineVisible ? "关闭目录" : "打开目录"
-        contentItem: Item {
-            Repeater {
-                model: 3
-                Rectangle {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    y: 9 + index * 5
-                    width: 12
-                    height: 1
-                    color: control.hovered ? theme.text : theme.muted
-                }
-            }
-        }
-        background: Rectangle {
-            radius: 6
-            color: control.down ? theme.pressed : control.hovered ? theme.hover : "transparent"
-        }
-    }
 
     component ContextMenu: Menu {
-        popupType: Popup.Item
+        popupType: Popup.Window
         implicitWidth: 190
         padding: 6
         background: Rectangle {
@@ -290,14 +288,20 @@ ApplicationWindow {
 
     ContextMenu {
         id: appearanceMenu
-        ContextMenuItem { text: "GitHub Light"; onTriggered: workspaceController.setThemeId("github-light") }
-        ContextMenuItem { text: "GitHub Dark"; onTriggered: workspaceController.setThemeId("github-dark") }
+        ContextMenuItem { text: "GitHub Light (经典浅色)"; onTriggered: workspaceController.setThemeId("github-light") }
+        ContextMenuItem { text: "GitHub Dark (现代深色)"; onTriggered: workspaceController.setThemeId("github-dark") }
+        ContextMenuItem { text: "VitePress (文档绿白)"; onTriggered: workspaceController.setThemeId("vitepress") }
+        ContextMenuItem { text: "One Dark Pro (经典暗黑)"; onTriggered: workspaceController.setThemeId("one-dark") }
+        ContextMenuItem { text: "Dracula (吸血鬼暗色)"; onTriggered: workspaceController.setThemeId("dracula") }
+        ContextMenuItem { text: "Nord (北欧极光冷杉)"; onTriggered: workspaceController.setThemeId("nord") }
+        ContextMenuSeparator {}
         ContextMenuItem { text: "VS Code Dark+"; onTriggered: workspaceController.setThemeId("vscode-dark") }
-        ContextMenuItem { text: "Paper"; onTriggered: workspaceController.setThemeId("paper") }
+        ContextMenuItem { text: "Paper (暖色纸张)"; onTriggered: workspaceController.setThemeId("paper") }
     }
 
     Popup {
         id: missingItemDialog
+        popupType: Popup.Window
         parent: Overlay.overlay
         anchors.centerIn: parent
         width: 360
@@ -340,6 +344,7 @@ ApplicationWindow {
 
     Popup {
         id: quickOpen
+        popupType: Popup.Window
         parent: Overlay.overlay
         anchors.centerIn: parent
         width: Math.min(560, window.width - 48)
@@ -462,6 +467,8 @@ ApplicationWindow {
 
     Shortcut { sequence: "Ctrl+K"; onActivated: quickOpen.open() }
     Shortcut { sequence: "Meta+K"; onActivated: quickOpen.open() }
+    Shortcut { sequence: "Ctrl+B"; onActivated: workspaceController.sidebarVisible = !workspaceController.sidebarVisible }
+    Shortcut { sequence: "Meta+B"; onActivated: workspaceController.sidebarVisible = !workspaceController.sidebarVisible }
 
     RowLayout {
         anchors.top: parent.top
@@ -473,15 +480,10 @@ ApplicationWindow {
         Rectangle {
             id: sidebar
             Layout.fillHeight: true
-            Layout.preferredWidth: 240
+            Layout.preferredWidth: workspaceController.sidebarVisible ? workspaceController.sidebarWidth : 0
+            visible: workspaceController.sidebarVisible
+            clip: true
             color: theme.panel
-
-            Rectangle {
-                anchors.right: parent.right
-                width: 1
-                height: parent.height
-                color: theme.border
-            }
 
             Flickable {
                 id: sidebarScroll
@@ -511,6 +513,26 @@ ApplicationWindow {
                             text: Qt.platform.os === "osx" ? "⌘K" : "Ctrl+K"
                             color: theme.muted
                             font.pixelSize: 10
+                            rightPadding: 4
+                        }
+                        Button {
+                            id: sidebarCollapseBtn
+                            implicitWidth: 24
+                            implicitHeight: 24
+                            ToolTip.visible: hovered
+                            ToolTip.text: "收起导航 (Ctrl+B)"
+                            contentItem: Label {
+                                text: "«"
+                                color: parent.hovered ? theme.text : theme.muted
+                                font.pixelSize: 14
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            background: Rectangle {
+                                radius: 4
+                                color: parent.down ? theme.pressed : parent.hovered ? theme.hover : "transparent"
+                            }
+                            onClicked: workspaceController.sidebarVisible = false
                         }
                     }
 
@@ -754,6 +776,53 @@ ApplicationWindow {
             }
         }
 
+        Item {
+            id: sidebarSplitter
+            Layout.fillHeight: true
+            Layout.preferredWidth: 6
+            visible: workspaceController.sidebarVisible
+            z: 10
+
+            Rectangle {
+                anchors.centerIn: parent
+                width: 1
+                height: parent.height
+                color: splitterMouse.pressed || splitterMouse.containsMouse ? theme.accent : theme.border
+                Behavior on color { ColorAnimation { duration: 120 } }
+            }
+
+            MouseArea {
+                id: splitterMouse
+                anchors.fill: parent
+                anchors.leftMargin: -2
+                anchors.rightMargin: -2
+                hoverEnabled: true
+                cursorShape: Qt.SplitHCursor
+                preventStealing: true
+
+                property real startX: 0
+                property real startWidth: 0
+
+                onPressed: function(mouse) {
+                    startX = mouse.x
+                    startWidth = workspaceController.sidebarWidth
+                }
+
+                onPositionChanged: function(mouse) {
+                    if (pressed) {
+                        let delta = mouse.x - startX
+                        let maxAllowed = Math.min(500, Math.floor(window.width * 0.45))
+                        let newWidth = Math.max(180, Math.min(maxAllowed, startWidth + delta))
+                        workspaceController.setSidebarWidth(newWidth)
+                    }
+                }
+
+                onDoubleClicked: {
+                    workspaceController.setSidebarWidth(240)
+                }
+            }
+        }
+
         DropArea {
             id: contentArea
             Layout.fillWidth: true
@@ -765,6 +834,128 @@ ApplicationWindow {
             Rectangle {
                 anchors.fill: parent
                 color: contentArea.containsDrag ? theme.drop : theme.window
+            }
+
+            Rectangle {
+                id: readerTopBar
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 38
+                color: theme.chrome
+                z: 10
+
+                Rectangle {
+                    anchors.bottom: parent.bottom
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    height: 1
+                    color: theme.border
+                }
+
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.leftMargin: 8
+                    anchors.rightMargin: 12
+                    spacing: 8
+
+                    Button {
+                        id: sidebarToggleBtn
+                        implicitWidth: 28
+                        implicitHeight: 28
+                        ToolTip.visible: hovered
+                        ToolTip.text: workspaceController.sidebarVisible ? "收起导航 (Ctrl+B)" : "展开导航 (Ctrl+B)"
+                        contentItem: Label {
+                            text: "☰"
+                            color: parent.hovered ? theme.text : theme.muted
+                            font.pixelSize: 14
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                        background: Rectangle {
+                            radius: 4
+                            color: parent.down ? theme.pressed : parent.hovered ? theme.hover : "transparent"
+                        }
+                        onClicked: workspaceController.sidebarVisible = !workspaceController.sidebarVisible
+                    }
+
+                    Label {
+                        text: documentController.title.length > 0 ? documentController.title : "FlashRead"
+                        color: theme.text
+                        font.pixelSize: 13
+                        font.weight: Font.DemiBold
+                        elide: Text.ElideRight
+                        Layout.fillWidth: true
+                    }
+
+                    Button {
+                        id: searchButton
+                        implicitWidth: 28
+                        implicitHeight: 28
+                        ToolTip.visible: hovered
+                        ToolTip.text: "快速查找 (Ctrl+K)"
+                        contentItem: Label {
+                            text: "🔍"
+                            font.pixelSize: 12
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                        background: Rectangle {
+                            radius: 4
+                            color: parent.down ? theme.pressed : parent.hovered ? theme.hover : "transparent"
+                        }
+                        onClicked: quickOpen.open()
+                    }
+
+                    Button {
+                        id: themeButton
+                        implicitWidth: 28
+                        implicitHeight: 28
+                        ToolTip.visible: hovered
+                        ToolTip.text: "切换主题外观"
+                        contentItem: Label {
+                            text: "🎨"
+                            font.pixelSize: 13
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                        background: Rectangle {
+                            radius: 4
+                            color: parent.down ? theme.pressed : parent.hovered ? theme.hover : "transparent"
+                        }
+                        onClicked: appearanceMenu.popup(themeButton, -appearanceMenu.implicitWidth + themeButton.width, themeButton.height + 4)
+                    }
+
+                    Button {
+                        id: outlineBtn
+                        visible: hasOutline
+                        implicitHeight: 28
+                        implicitWidth: 68
+                        ToolTip.visible: hovered
+                        ToolTip.text: outlineVisible ? "收起目录" : "展开目录"
+                        contentItem: RowLayout {
+                            spacing: 4
+                            Label {
+                                text: "📑"
+                                font.pixelSize: 12
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            Label {
+                                text: "目录"
+                                color: outlineBtn.hovered || outlineVisible ? theme.text : theme.muted
+                                font.pixelSize: 12
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                        }
+                        background: Rectangle {
+                            radius: 4
+                            color: outlineVisible ? theme.hover : (outlineBtn.down ? theme.pressed : (outlineBtn.hovered ? theme.hover : "transparent"))
+                            border.width: outlineVisible ? 1 : 0
+                            border.color: theme.border
+                        }
+                        onClicked: outlineManuallyClosed = !outlineManuallyClosed
+                    }
+                }
             }
 
             ColumnLayout {
@@ -786,20 +977,63 @@ ApplicationWindow {
 
             Rectangle {
                 id: outlinePanel
-                anchors.top: parent.top
-                anchors.right: parent.right
+                anchors.top: readerTopBar.bottom
                 anchors.bottom: parent.bottom
-                width: hasDocument && !workspaceController.folderViewActive && outlineVisible ? 224 : 0
-                visible: width > 0
+                width: outlineWidth
+                x: hasDocument && !workspaceController.folderViewActive && outlineVisible ? parent.width - outlineWidth : parent.width
+                visible: x < parent.width
                 clip: true
                 color: theme.panel
-                Behavior on width { NumberAnimation { duration: 170; easing.type: Easing.OutCubic } }
+                z: 5
+                opacity: hasDocument && !workspaceController.folderViewActive && outlineVisible ? 1.0 : 0.0
+                Behavior on x { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+                Behavior on opacity { NumberAnimation { duration: 130 } }
 
-                Rectangle {
+                Item {
+                    id: outlineSplitter
                     anchors.left: parent.left
-                    width: 1
-                    height: parent.height
-                    color: theme.border
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    width: 6
+                    z: 10
+
+                    Rectangle {
+                        anchors.left: parent.left
+                        width: 1
+                        height: parent.height
+                        color: outlineSplitterMouse.pressed || outlineSplitterMouse.containsMouse ? theme.accent : theme.border
+                        Behavior on color { ColorAnimation { duration: 120 } }
+                    }
+
+                    MouseArea {
+                        id: outlineSplitterMouse
+                        anchors.fill: parent
+                        anchors.leftMargin: -2
+                        anchors.rightMargin: -2
+                        hoverEnabled: true
+                        cursorShape: Qt.SplitHCursor
+                        preventStealing: true
+
+                        property real startX: 0
+                        property real startWidth: 0
+
+                        onPressed: function(mouse) {
+                            startX = mouse.x
+                            startWidth = outlineWidth
+                        }
+
+                        onPositionChanged: function(mouse) {
+                            if (pressed) {
+                                let delta = startX - mouse.x
+                                let maxAllowed = Math.min(420, Math.floor(window.width * 0.4))
+                                outlineWidth = Math.max(180, Math.min(maxAllowed, startWidth + delta))
+                            }
+                        }
+
+                        onDoubleClicked: {
+                            outlineWidth = 224
+                        }
+                    }
                 }
 
                 Column {
@@ -810,7 +1044,25 @@ ApplicationWindow {
                         width: parent.width
                         Label { text: "文档目录"; color: theme.text; font.pixelSize: 13; font.weight: Font.DemiBold }
                         Item { Layout.fillWidth: true }
-                        Label { text: documentController.outline.length; color: theme.muted; font.pixelSize: 11 }
+                        Label { text: documentController.outline.length; color: theme.muted; font.pixelSize: 11; rightPadding: 4 }
+                        Button {
+                            implicitWidth: 22
+                            implicitHeight: 22
+                            ToolTip.visible: hovered
+                            ToolTip.text: "关闭目录"
+                            contentItem: Label {
+                                text: "✕"
+                                color: parent.hovered ? theme.text : theme.muted
+                                font.pixelSize: 11
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            background: Rectangle {
+                                radius: 4
+                                color: parent.down ? theme.pressed : parent.hovered ? theme.hover : "transparent"
+                            }
+                            onClicked: outlineManuallyClosed = true
+                        }
                     }
                     Label {
                         width: parent.width
@@ -822,7 +1074,7 @@ ApplicationWindow {
                     ListView {
                         id: outlineList
                         width: parent.width
-                        height: parent.height - 48
+                        height: parent.height - 52
                         clip: true
                         model: documentController.outline
                         spacing: 2
@@ -849,76 +1101,49 @@ ApplicationWindow {
                                 id: outlineMouse
                                 anchors.fill: parent
                                 hoverEnabled: true
-                                onClicked: readerScroll.contentY = Math.max(0,
-                                    modelData.progress * Math.max(0, readerScroll.contentHeight - readerScroll.height))
+                                onClicked: {
+                                    if (modelData.title && modelData.title.length > 0) {
+                                        markdownWebView.scrollToHeading(modelData.title)
+                                    } else {
+                                        markdownWebView.scrollToProgress(modelData.progress)
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
 
-            Flickable {
-                id: readerScroll
-                anchors.top: parent.top
+            MarkdownWebView {
+                id: markdownWebView
+                anchors.top: readerTopBar.bottom
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
-                anchors.right: outlinePanel.width > 0 ? outlinePanel.left : parent.right
+                anchors.right: parent.right
+                anchors.rightMargin: hasDocument && !workspaceController.folderViewActive && outlineVisible ? outlineWidth : 0
                 visible: hasDocument && !workspaceController.folderViewActive
-                contentWidth: width
-                contentHeight: readerPage.height + 96
-                clip: true
-                ScrollBar.vertical: AppScrollBar {}
-                maximumFlickVelocity: 4200
-                flickDeceleration: 1800
+                htmlContent: documentController.renderedContent
+                themeId: workspaceController.themeId
 
-                WheelHandler {
-                    target: readerScroll
-                    blocking: true
-                    onWheel: function(event) {
-                        const delta = event.pixelDelta.y !== 0
-                            ? event.pixelDelta.y * 1.6 : event.angleDelta.y / 120 * 88
-                        const maximum = Math.max(0, readerScroll.contentHeight - readerScroll.height)
-                        readerScroll.contentY = Math.max(0, Math.min(maximum, readerScroll.contentY - delta))
-                        event.accepted = true
-                    }
-                }
-
-                Item {
-                    width: readerScroll.width
-                    height: readerPage.height + 96
-                    Item {
-                        id: readerPage
-                        width: Math.min(parent.width - 96, 780)
-                        height: documentText.implicitHeight + 112
-                        x: (parent.width - width) / 2
-                        y: 48
-                        Text {
-                            id: documentText
-                            anchors.fill: parent
-                            anchors.leftMargin: 20
-                            anchors.rightMargin: 20
-                            anchors.topMargin: 36
-                            anchors.bottomMargin: 36
-                            text: documentHtml()
-                            wrapMode: Text.Wrap
-                            textFormat: Text.RichText
-                            font.family: systemFontFamily
-                            font.pixelSize: 15
-                            lineHeight: 1.52
-                            color: theme.text
-                        }
-                    }
+                onLinkClicked: function(url) {
+                    Qt.openUrlExternally(url)
                 }
             }
 
-            OutlineToggle {
-                anchors.top: readerScroll.top
-                anchors.right: readerScroll.right
-                anchors.topMargin: 14
-                anchors.rightMargin: 16
-                z: 2
-                visible: hasDocument && !workspaceController.folderViewActive && hasOutline
-                onClicked: outlineManuallyClosed = !outlineManuallyClosed
+            Rectangle {
+                anchors.fill: parent
+                color: theme.window
+                visible: documentController.isLoading
+                opacity: documentController.isLoading ? 0.7 : 0.0
+                z: 15
+                Behavior on opacity { NumberAnimation { duration: 100 } }
+
+                Label {
+                    anchors.centerIn: parent
+                    text: "正在极速加载…"
+                    color: theme.muted
+                    font.pixelSize: 13
+                }
             }
         }
     }

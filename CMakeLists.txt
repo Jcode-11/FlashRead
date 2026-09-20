@@ -24,6 +24,8 @@ FetchContent_MakeAvailable(md4c)
 qt_standard_project_setup(REQUIRES 6.6)
 qt_policy(SET QTP0004 NEW)
 
+include_directories(3rdparty/webview2/build/native/include)
+
 set(DIAGRAM_SOURCES
     src/diagram/DiagramTypes.h
     src/diagram/FlowchartParser.h
@@ -36,6 +38,17 @@ set(DIAGRAM_SOURCES
     src/diagram/DiagramRenderer.cpp
     src/diagram/DiagramImageProvider.h
     src/diagram/DiagramImageProvider.cpp
+)
+
+set(SYNTAX_SOURCES
+    src/syntax/SyntaxHighlighter.h
+    src/syntax/SyntaxHighlighter.cpp
+)
+
+set(WEBVIEW_SOURCES
+    src/webview/MarkdownWebViewItem.h
+    src/webview/MarkdownWebViewItem.cpp
+    src/webview/WebViewCallback.h
 )
 
 set(PLATFORM_SOURCES "")
@@ -52,7 +65,10 @@ qt_add_executable(FlashRead
     src/WorkspaceController.h
     src/main.cpp
     ${DIAGRAM_SOURCES}
+    ${SYNTAX_SOURCES}
+    ${WEBVIEW_SOURCES}
     ${PLATFORM_SOURCES}
+    src/web/web_resources.qrc
 )
 
 qt_add_qml_module(FlashRead
@@ -64,7 +80,18 @@ qt_add_qml_module(FlashRead
         resources/FlashRead.png
 )
 
-target_link_libraries(FlashRead PRIVATE Qt6::Quick Qt6::QuickDialogs2 Qt6::Svg md4c-html)
+target_link_libraries(FlashRead PRIVATE Qt6::Quick Qt6::QuickDialogs2 Qt6::Svg md4c-html shlwapi)
+
+if(WIN32)
+    add_custom_command(TARGET FlashRead POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/webview2/build/native/x64/WebView2Loader.dll"
+        "$<TARGET_FILE_DIR:FlashRead>/WebView2Loader.dll"
+    )
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/webview2/build/native/x64/WebView2Loader.dll"
+        DESTINATION bin
+    )
+endif()
 
 set_target_properties(FlashRead PROPERTIES
     WIN32_EXECUTABLE TRUE
@@ -87,8 +114,9 @@ add_executable(test_diagram
     src/MarkdownRenderer.cpp
     src/MarkdownRenderer.h
     ${DIAGRAM_SOURCES}
+    ${SYNTAX_SOURCES}
 )
-target_include_directories(test_diagram PRIVATE src)
+target_include_directories(test_diagram PRIVATE src 3rdparty/webview2/build/native/include)
 target_link_libraries(test_diagram PRIVATE Qt6::Gui Qt6::Svg Qt6::Quick md4c-html)
 
 # Icon generator tool
@@ -96,6 +124,12 @@ add_executable(generate_icon
     tools/generate_icon.cpp
 )
 target_link_libraries(generate_icon PRIVATE Qt6::Gui Qt6::Svg)
+
+# Capture tool
+add_executable(capture_tool
+    tools/capture_tool.cpp
+)
+target_link_libraries(capture_tool PRIVATE Qt6::Gui user32)
 
 include(GNUInstallDirs)
 install(TARGETS FlashRead

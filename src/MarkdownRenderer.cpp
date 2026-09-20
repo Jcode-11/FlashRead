@@ -1,5 +1,6 @@
 #include "MarkdownRenderer.h"
 #include "diagram/DiagramRenderer.h"
+#include "syntax/SyntaxHighlighter.h"
 
 #include <md4c-html.h>
 #include <QRegularExpression>
@@ -9,6 +10,18 @@ void appendHtml(const MD_CHAR *text, MD_SIZE size, void *userdata)
 {
     auto *output = static_cast<QByteArray *>(userdata);
     output->append(text, static_cast<qsizetype>(size));
+}
+
+QString unescapeHtml(const QString &html)
+{
+    QString res = html;
+    res.replace(QStringLiteral("&lt;"), QStringLiteral("<"));
+    res.replace(QStringLiteral("&gt;"), QStringLiteral(">"));
+    res.replace(QStringLiteral("&quot;"), QStringLiteral("\""));
+    res.replace(QStringLiteral("&apos;"), QStringLiteral("'"));
+    res.replace(QStringLiteral("&#39;"), QStringLiteral("'"));
+    res.replace(QStringLiteral("&amp;"), QStringLiteral("&"));
+    return res;
 }
 } // namespace
 
@@ -26,7 +39,6 @@ QString MarkdownRenderer::render(const QByteArray &source)
     QString processedText = utf8Text;
     QRegularExpressionMatchIterator it = mermaidRegex.globalMatch(utf8Text);
 
-    // We collect replacements first or do replace from back to front
     struct Replacement {
         qsizetype start;
         qsizetype length;
@@ -70,9 +82,35 @@ QString MarkdownRenderer::render(const QByteArray &source)
         finalHtml = QString::fromUtf8(processedBytes).toHtmlEscaped().replace('\n', "<br>");
     }
 
-    // Replace diagram tokens with HTML image tags
+    // Replace diagram tokens with SVG containers
     static const QRegularExpression tokenRegex(R"(<p>\s*FLASHREADDIAGRAMTOKEN_([a-f0-9]+)_ENDTOKEN\s*<\/p>|FLASHREADDIAGRAMTOKEN_([a-f0-9]+)_ENDTOKEN)");
-    finalHtml.replace(tokenRegex, R"(<p align="center" style="margin: 22px 0;"><img src="image://diagram/\1\2" /></p>)");
+    QRegularExpressionMatchIterator diagIt = tokenRegex.globalMatch(finalHtml);
+    struct DiagReplacement {
+        qsizetype start;
+        qsizetype length;
+        QString replacement;
+    };
+    QList<DiagReplacement> diagReplacements;
+
+    while (diagIt.hasNext()) {
+        auto match = diagIt.next();
+        QString diagId = match.captured(1).isEmpty() ? match.captured(2) : match.captured(1);
+        QString diagSrc = Diagram::DiagramRenderer::instance().getDiagramSource(diagId);
+        
+        QString svg = Diagram::DiagramRenderer::instance().renderSvg(diagSrc, QStringLiteral("github-light"));
+        QString container = QStringLiteral("<div class=\"mermaid-container\" data-diagram-id=\"%1\">%2</div>").arg(diagId, svg);
+
+        DiagReplacement rep;
+        rep.start = match.capturedStart();
+        rep.length = match.capturedLength();
+        rep.replacement = container;
+        diagReplacements.append(rep);
+    }
+
+    for (int i = diagReplacements.size() - 1; i >= 0; --i) {
+        const auto &rep = diagReplacements[i];
+        finalHtml.replace(rep.start, rep.length, rep.replacement);
+    }
 
     return finalHtml;
 }

@@ -48,7 +48,7 @@ graph TD
         assert(graph.edges.size() >= 7);
 
         // Verify Theme SVG Rendering
-        QStringList themes = {"github-light", "github-dark", "vscode-dark", "paper"};
+        QStringList themes = {"github-light", "github-dark", "dracula", "nord", "one-dark", "vitepress", "vscode-dark", "paper"};
         for (const QString &themeId : themes) {
             qreal w = 0, h = 0;
             QString svg = DiagramRenderer::instance().renderSvg(source, themeId, &w, &h);
@@ -174,8 +174,75 @@ Some paragraph after diagram.
         std::cout << "  -> MarkdownRenderer Integration: PASS" << std::endl;
     }
 
+    // 5. Test Multi-Language Syntax Highlighting
+    {
+        std::cout << "\n[Test 5] Testing Multi-Language Syntax Highlighting..." << std::endl;
+        QByteArray mdWithCode = R"(
+# Code Highlighting Test
+
+```cpp
+#include <iostream>
+#include <vector>
+
+// Main entry point
+int main() {
+    std::vector<int> nums = {1, 2, 3};
+    std::cout << "Hello FlashRead!" << std::endl;
+    return 0;
+}
+```
+
+```python
+# Python calculation
+def calculate(name: str, count: int = 10) -> bool:
+    print(f"Processing {name}")
+    return True
+```
+
+```json
+{
+  "name": "FlashRead",
+  "version": "1.0.0",
+  "native": true,
+  "count": 42
+}
+```
+
+```sql
+SELECT id, username, email FROM users WHERE active = 1 ORDER BY created_at DESC;
+```
+)";
+        QString html = MarkdownRenderer::render(mdWithCode);
+        std::cout << "  Rendered C++ / Python / JSON / SQL HTML length: " << html.length() << " chars" << std::endl;
+        
+        // Assert modern card container, header tag, copy button, and line numbers
+        assert(html.contains("class=\"code-box\""));
+        assert(html.contains("class=\"code-header\""));
+        assert(html.contains("class=\"code-lang-tag\">cpp ⌄</span>"));
+        assert(html.contains("class=\"code-lang-tag\">python ⌄</span>"));
+        assert(html.contains("class=\"code-lang-tag\">json ⌄</span>"));
+        assert(html.contains("class=\"code-lang-tag\">sql ⌄</span>"));
+        assert(html.contains("class=\"code-copy-btn\">"));
+        assert(html.contains("class=\"code-line-nums\""));
+        assert(html.contains("class=\"line-num-pre\">1"));
+
+        // Assert token classes
+        assert(html.contains("class=\"hl-p\">#include</span>"));
+        assert(html.contains("class=\"hl-t\">int</span>"));
+        assert(html.contains("class=\"hl-s\">&quot;Hello FlashRead!&quot;</span>"));
+        assert(html.contains("class=\"hl-c\">// Main entry point</span>"));
+        assert(html.contains("class=\"hl-k\">def</span>"));
+        assert(html.contains("class=\"hl-k\">return</span>"));
+        assert(html.contains("class=\"hl-const\">True</span>"));
+        assert(html.contains("class=\"hl-key\">&quot;name&quot;</span>"));
+        assert(html.contains("class=\"hl-k\">SELECT</span>"));
+        assert(html.contains("class=\"hl-k\">FROM</span>"));
+
+        std::cout << "  -> Multi-Language Syntax Highlighting: PASS" << std::endl;
+    }
+
     std::cout << "\n==========================================" << std::endl;
-    std::cout << "  ALL 4 TEST SUITES PASSED SUCCESSFULLY!  " << std::endl;
+    std::cout << "  ALL 5 TEST SUITES PASSED SUCCESSFULLY!  " << std::endl;
     std::cout << "==========================================" << std::endl;
 
     return 0;

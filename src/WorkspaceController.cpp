@@ -22,6 +22,8 @@ constexpr qsizetype VisibleHistoryLimit = 12;
 bool isKnownTheme(const QString &themeId)
 {
     return themeId == "github-light" || themeId == "github-dark"
+        || themeId == "dracula" || themeId == "nord"
+        || themeId == "one-dark" || themeId == "vitepress"
         || themeId == "vscode-dark" || themeId == "paper";
 }
 
@@ -194,7 +196,7 @@ void WorkspaceController::toggleFolder(const QString &path)
     if (!folderInfo.isDir()) return;
     const QString normalizedPath = folderInfo.absoluteFilePath();
     addFolder(normalizedPath);
-    touchRecent(normalizedPath, "folder");
+    touchRecent(normalizedPath, "folder", false);
     m_folderViewActive = false;
     m_workspaceFilePath.clear();
     if (m_expandedFolder == normalizedPath) {
@@ -317,11 +319,11 @@ void WorkspaceController::addFolder(const QString &path)
 
 void WorkspaceController::rememberFile(const QString &path)
 {
-    touchRecent(path, "file");
+    touchRecent(path, "file", false);
     QTimer::singleShot(0, this, [this]() { saveSettings(); });
 }
 
-bool WorkspaceController::touchRecent(const QString &path, const QString &type)
+bool WorkspaceController::touchRecent(const QString &path, const QString &type, bool emitSignal)
 {
     const QVariantMap item = recentEntry(path, type);
     for (auto iterator = m_recentEntries.begin(); iterator != m_recentEntries.end();) {
@@ -336,7 +338,7 @@ bool WorkspaceController::touchRecent(const QString &path, const QString &type)
     }
     if (m_visibleEntries.size() >= VisibleHistoryLimit) return false;
     m_visibleEntries.append(item);
-    emit workspaceChanged();
+    if (emitSignal) emit workspaceChanged();
     return true;
 }
 
@@ -381,6 +383,9 @@ void WorkspaceController::loadSettings()
     }
     const QString savedTheme = settings.value("appearance/themeId", m_themeId).toString();
     if (isKnownTheme(savedTheme)) m_themeId = savedTheme;
+    m_sidebarWidth = settings.value("workspace/sidebarWidth", 240).toInt();
+    if (m_sidebarWidth < 180 || m_sidebarWidth > 500) m_sidebarWidth = 240;
+    m_sidebarVisible = settings.value("workspace/sidebarVisible", true).toBool();
 }
 
 void WorkspaceController::saveSettings()
@@ -390,4 +395,28 @@ void WorkspaceController::saveSettings()
     settings.setValue("workspace/folders", m_folderPaths);
     settings.setValue("workspace/recentEntries", m_recentEntries);
     settings.setValue("appearance/themeId", m_themeId);
+    settings.setValue("workspace/sidebarWidth", m_sidebarWidth);
+    settings.setValue("workspace/sidebarVisible", m_sidebarVisible);
+}
+
+int WorkspaceController::sidebarWidth() const { return m_sidebarWidth; }
+bool WorkspaceController::sidebarVisible() const { return m_sidebarVisible; }
+
+void WorkspaceController::setSidebarWidth(int width)
+{
+    int clamped = std::clamp(width, 180, 500);
+    if (m_sidebarWidth != clamped) {
+        m_sidebarWidth = clamped;
+        emit sidebarWidthChanged();
+        QTimer::singleShot(0, this, [this]() { saveSettings(); });
+    }
+}
+
+void WorkspaceController::setSidebarVisible(bool visible)
+{
+    if (m_sidebarVisible != visible) {
+        m_sidebarVisible = visible;
+        emit sidebarVisibleChanged();
+        QTimer::singleShot(0, this, [this]() { saveSettings(); });
+    }
 }

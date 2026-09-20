@@ -4,6 +4,7 @@
 #include <QString>
 #include <QUrl>
 #include <QVariantList>
+#include <atomic>
 
 class DocumentController final : public QObject
 {
@@ -14,6 +15,7 @@ class DocumentController final : public QObject
     Q_PROPERTY(QString title READ title NOTIFY documentChanged)
     Q_PROPERTY(QString statusMessage READ statusMessage NOTIFY documentChanged)
     Q_PROPERTY(bool truncated READ truncated NOTIFY documentChanged)
+    Q_PROPERTY(bool isLoading READ isLoading NOTIFY documentChanged)
     Q_PROPERTY(QVariantList outline READ outline NOTIFY documentChanged)
 
 public:
@@ -25,6 +27,7 @@ public:
     [[nodiscard]] QString title() const;
     [[nodiscard]] QString statusMessage() const;
     [[nodiscard]] bool truncated() const;
+    [[nodiscard]] bool isLoading() const;
     [[nodiscard]] QVariantList outline() const;
 
     Q_INVOKABLE void openUrl(const QUrl &url);
@@ -40,5 +43,7 @@ private:
     QString m_title;
     QString m_statusMessage;
     bool m_truncated = false;
+    bool m_isLoading = false;
     QVariantList m_outline;
+    std::atomic<quint64> m_currentRequestId {0};
 };

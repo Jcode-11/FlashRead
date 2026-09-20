@@ -4,11 +4,24 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QRegularExpression>
+#include <QThreadPool>
 #include <QVariantMap>
 
 namespace {
-constexpr qint64 InitialReadBytes = 256 * 1024;
-}
+constexpr qint64 MaxDirectReadBytes = 512 * 1024;
+
+struct ParseResult {
+    quint64 requestId = 0;
+    QString filePath;
+    QString title;
+    QString content;
+    QString renderedContent;
+    QString statusMessage;
+    bool truncated = false;
+    QVariantList outline;
+    bool success = false;
+};
+} // namespace
 
 DocumentController::DocumentController(QObject *parent)
     : QObject(parent)
@@ -45,6 +58,11 @@ bool DocumentController::truncated() const
     return m_truncated;
 }
 
+bool DocumentController::isLoading() const
+{
+    return m_isLoading;
+}
+
 QVariantList DocumentController::outline() const
 {
     return m_outline;
@@ -63,49 +81,86 @@ void DocumentController::openUrl(const QUrl &url)
 
 void DocumentController::openPath(const QString &path)
 {
-    QFile file(path);
-    if (!file.open(QIODevice::ReadOnly)) {
+    const quint64 reqId = ++m_currentRequestId;
+
+    if (path.isEmpty()) {
         m_content.clear();
         m_renderedContent.clear();
-        m_filePath = path;
-        m_title = QFileInfo(path).fileName();
-        m_statusMessage = tr("Unable to open this file.");
+        m_filePath.clear();
+        m_title.clear();
+        m_statusMessage.clear();
         m_truncated = false;
+        m_isLoading = false;
         m_outline.clear();
         emit documentChanged();
         return;
     }
 
-    QByteArray bytes = file.read(InitialReadBytes);
-    const bool reachedReadLimit = bytes.size() == InitialReadBytes;
-    if (reachedReadLimit) {
-        const qsizetype lastNewline = bytes.lastIndexOf('\n');
-        if (lastNewline > 0) {
-            bytes.truncate(lastNewline + 1);
-        }
-    }
-
-    m_content = QString::fromUtf8(bytes);
-    m_renderedContent = MarkdownRenderer::render(bytes);
-    m_filePath = QFileInfo(path).absoluteFilePath();
-    m_title = QFileInfo(path).fileName();
-    m_truncated = file.size() > bytes.size();
-    m_statusMessage = m_truncated
-        ? tr("Showing the first 256 KB. The rest will be parsed in the background.")
-        : tr("Ready");
-
-    m_outline.clear();
-    const QRegularExpression headingExpression(QStringLiteral(R"(^(#{1,6})\s+(.+?)\s*#*\s*$)"));
-    qsizetype offset = 0;
-    const QStringList lines = m_content.split('\n');
-    for (const QString &line : lines) {
-        const QRegularExpressionMatch match = headingExpression.match(line);
-        if (match.hasMatch()) {
-            m_outline.append(QVariantMap {{"title", match.captured(2).trimmed()},
-                {"level", match.captured(1).size()},
-                {"progress", m_content.isEmpty() ? 0.0 : static_cast<double>(offset) / m_content.size()}});
-        }
-        offset += line.size() + 1;
-    }
+    const QFileInfo fileInfo(path);
+    const QString absolutePath = fileInfo.absoluteFilePath();
+    m_filePath = absolutePath;
+    m_title = fileInfo.fileName();
+    m_isLoading = true;
+    m_statusMessage = tr("Loading...");
     emit documentChanged();
+
+    QThreadPool::globalInstance()->start([this, absolutePath, reqId]() {
+        QFile file(absolutePath);
+        ParseResult result;
+        result.requestId = reqId;
+        result.filePath = absolutePath;
+        result.title = QFileInfo(absolutePath).fileName();
+
+        if (!file.open(QIODevice::ReadOnly)) {
+            result.statusMessage = tr("Unable to open this file.");
+            result.success = false;
+        } else {
+            QByteArray bytes = file.read(MaxDirectReadBytes);
+            const bool reachedReadLimit = bytes.size() == MaxDirectReadBytes;
+            if (reachedReadLimit) {
+                const qsizetype lastNewline = bytes.lastIndexOf('\n');
+                if (lastNewline > 0) {
+                    bytes.truncate(lastNewline + 1);
+                }
+            }
+
+            result.content = QString::fromUtf8(bytes);
+            result.renderedContent = MarkdownRenderer::render(bytes);
+            result.truncated = file.size() > bytes.size();
+            result.statusMessage = result.truncated
+                ? tr("Showing the first 512 KB. The rest will be parsed in the background.")
+                : tr("Ready");
+            result.success = true;
+
+            const QRegularExpression headingExpression(
+                QStringLiteral(R"(^(#{1,6})\s+(.+?)\s*#*\s*$)"),
+                QRegularExpression::MultilineOption
+            );
+            QRegularExpressionMatchIterator it = headingExpression.globalMatch(result.content);
+            while (it.hasNext()) {
+                const auto match = it.next();
+                result.outline.append(QVariantMap {
+                    {"title", match.captured(2).trimmed()},
+                    {"level", match.captured(1).size()},
+                    {"progress", result.content.isEmpty() ? 0.0 : static_cast<double>(match.capturedStart()) / result.content.size()}
+                });
+            }
+        }
+
+        QMetaObject::invokeMethod(this, [this, res = std::move(result)]() mutable {
+            if (res.requestId != m_currentRequestId.load()) {
+                return; // User has switched to another file, drop stale result
+            }
+
+            m_content = std::move(res.content);
+            m_renderedContent = std::move(res.renderedContent);
+            m_filePath = std::move(res.filePath);
+            m_title = std::move(res.title);
+            m_statusMessage = std::move(res.statusMessage);
+            m_truncated = res.truncated;
+            m_outline = std::move(res.outline);
+            m_isLoading = false;
+            emit documentChanged();
+        }, Qt::QueuedConnection);
+    });
 }

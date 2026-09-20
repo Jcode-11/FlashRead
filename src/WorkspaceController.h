@@ -19,6 +19,8 @@ class WorkspaceController final : public QObject
     Q_PROPERTY(QString selectedFolder READ selectedFolder NOTIFY workspaceChanged)
     Q_PROPERTY(bool folderViewActive READ folderViewActive NOTIFY workspaceChanged)
     Q_PROPERTY(QString themeId READ themeId WRITE setThemeId NOTIFY themeChanged)
+    Q_PROPERTY(int sidebarWidth READ sidebarWidth WRITE setSidebarWidth NOTIFY sidebarWidthChanged)
+    Q_PROPERTY(bool sidebarVisible READ sidebarVisible WRITE setSidebarVisible NOTIFY sidebarVisibleChanged)
 
 public:
     explicit WorkspaceController(DocumentController *documentController, QObject *parent = nullptr);
@@ -32,6 +34,8 @@ public:
     QString selectedFolder() const;
     bool folderViewActive() const;
     QString themeId() const;
+    int sidebarWidth() const;
+    bool sidebarVisible() const;
 
     Q_INVOKABLE void handleUrl(const QUrl &url);
     Q_INVOKABLE void openPath(const QString &path);
@@ -45,15 +49,19 @@ public:
     Q_INVOKABLE void revealPath(const QString &path);
     Q_INVOKABLE QVariantList searchRecent(const QString &query) const;
     Q_INVOKABLE void setThemeId(const QString &themeId);
+    Q_INVOKABLE void setSidebarWidth(int width);
+    Q_INVOKABLE void setSidebarVisible(bool visible);
 
 signals:
     void workspaceChanged();
     void themeChanged();
+    void sidebarWidthChanged();
+    void sidebarVisibleChanged();
 
 private:
     void addFolder(const QString &path);
     void rememberFile(const QString &path);
-    bool touchRecent(const QString &path, const QString &type);
+    bool touchRecent(const QString &path, const QString &type, bool emitSignal = true);
     void refreshFolderFiles();
     void loadSettings();
     void saveSettings();
@@ -69,4 +77,6 @@ private:
     QString m_workspaceFilePath;
     bool m_folderViewActive = false;
     QString m_themeId = QStringLiteral("github-light");
+    int m_sidebarWidth = 240;
+    bool m_sidebarVisible = true;
 };

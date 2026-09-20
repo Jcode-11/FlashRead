@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/web">
+        <file>index.html</file>
+        <file>themes.css</file>
+        <file>prism.min.js</file>
+        <file>app.js</file>
+    </qresource>
+</RCC>

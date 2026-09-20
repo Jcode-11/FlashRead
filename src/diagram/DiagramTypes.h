@@ -131,6 +131,54 @@ struct ThemeColors {
             t.nodeBorder = QColor("#58a6ff");
             t.clusterBg = QColor("#0d1117");
             t.clusterBorder = QColor("#30363d");
+        } else if (themeId == "dracula") {
+            t.background = QColor("#1e1f29");
+            t.surface = QColor("#282a36");
+            t.border = QColor("#44475a");
+            t.text = QColor("#f8f8f2");
+            t.mutedText = QColor("#6272a4");
+            t.accent = QColor("#bd93f9");
+            t.edge = QColor("#8be9fd");
+            t.nodeBg = QColor("#21222c");
+            t.nodeBorder = QColor("#bd93f9");
+            t.clusterBg = QColor("#282a36");
+            t.clusterBorder = QColor("#44475a");
+        } else if (themeId == "nord") {
+            t.background = QColor("#242933");
+            t.surface = QColor("#2e3440");
+            t.border = QColor("#434c5e");
+            t.text = QColor("#eceff4");
+            t.mutedText = QColor("#7b88a1");
+            t.accent = QColor("#88c0d0");
+            t.edge = QColor("#81a1c1");
+            t.nodeBg = QColor("#3b4252");
+            t.nodeBorder = QColor("#88c0d0");
+            t.clusterBg = QColor("#2e3440");
+            t.clusterBorder = QColor("#434c5e");
+        } else if (themeId == "one-dark") {
+            t.background = QColor("#1e2227");
+            t.surface = QColor("#282c34");
+            t.border = QColor("#3e4451");
+            t.text = QColor("#abb2bf");
+            t.mutedText = QColor("#5c6370");
+            t.accent = QColor("#61afef");
+            t.edge = QColor("#98c379");
+            t.nodeBg = QColor("#21252b");
+            t.nodeBorder = QColor("#61afef");
+            t.clusterBg = QColor("#282c34");
+            t.clusterBorder = QColor("#3e4451");
+        } else if (themeId == "vitepress") {
+            t.background = QColor("#ffffff");
+            t.surface = QColor("#f6f6f7");
+            t.border = QColor("#e2e2e3");
+            t.text = QColor("#213547");
+            t.mutedText = QColor("#606067");
+            t.accent = QColor("#10b981");
+            t.edge = QColor("#606067");
+            t.nodeBg = QColor("#ffffff");
+            t.nodeBorder = QColor("#10b981");
+            t.clusterBg = QColor("#f6f6f7");
+            t.clusterBorder = QColor("#e2e2e3");
         } else if (themeId == "vscode-dark") {
             t.background = QColor("#1e1e1e");
             t.surface = QColor("#252526");

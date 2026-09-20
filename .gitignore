@@ -1,7 +1,10 @@
-build/
+/build/
+/dist/
 .qt/
 *.user
 *.user.*
 *.autosave
-
+*.log
 *.exe
+.DS_Store
+Thumbs.db

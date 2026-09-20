@@ -1,0 +1,1732 @@
+#pragma once
+
+namespace FlashRead::Web {
+inline const char INDEX_HTML[] = R"HTML_TEMPLATE(
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="github-light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlashRead</title>
+  <style>
+/* ==========================================================================
+   FlashRead Modern Theme & Typography Design System
+   Inspired by VitePress, GitHub Dark, VS Code & Typora Modern Markdown UIs
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Theme Color Palettes (CSS Variables)
+   -------------------------------------------------------------------------- */
+
+:root, [data-theme="github-light"] {
+  --bg-page: #ffffff;
+  --bg-panel: #f6f8fa;
+  --text-main: #1f2328;
+  --text-muted: #656d76;
+  --border-subtle: #d0d7de;
+  --border-muted: #e1e4e8;
+  --accent: #0969da;
+  --accent-hover: #0550ae;
+  --link-color: #0969da;
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.05);
+
+  /* Code Card */
+  --code-bg: #f8fafc;
+  --code-header-bg: #f1f5f9;
+  --code-border: #e2e8f0;
+  --code-line-border: #e2e8f0;
+  --code-line-num: #94a3b8;
+  --code-inline-bg: #f1f5f9;
+  --code-inline-border: #e2e8f0;
+  --code-inline-text: #0f172a;
+  
+  --code-badge-bg: #ffffff;
+  --code-badge-border: #cbd5e1;
+  --code-badge-text: #475569;
+  
+  --code-btn-bg: #ffffff;
+  --code-btn-hover: #f1f5f9;
+  --code-btn-text: #475569;
+  --code-btn-border: #cbd5e1;
+
+  /* Tables & Quotes */
+  --table-header-bg: #f8fafc;
+  --table-row-zebra: #f1f5f9;
+  --quote-bg: #f8fafc;
+  --quote-border: #0969da;
+  --quote-text: #475569;
+
+  /* Callouts */
+  --alert-note-bg: #eff6ff; --alert-note-border: #3b82f6; --alert-note-text: #1d4ed8;
+  --alert-tip-bg: #f0fdf4; --alert-tip-border: #22c55e; --alert-tip-text: #15803d;
+  --alert-important-bg: #faf5ff; --alert-important-border: #a855f7; --alert-important-text: #7e22ce;
+  --alert-warning-bg: #fffbeb; --alert-warning-border: #f59e0b; --alert-warning-text: #b45309;
+  --alert-caution-bg: #fef2f2; --alert-caution-border: #ef4444; --alert-caution-text: #b91c1c;
+
+  /* Syntax Highlighting */
+  --hl-keyword: #cf222e;
+  --hl-type: #953800;
+  --hl-string: #0a3069;
+  --hl-comment: #64748b;
+  --hl-number: #0550ae;
+  --hl-function: #8250df;
+  --hl-property: #0550ae;
+  --hl-variable: #953800;
+  --hl-operator: #0f172a;
+  --hl-punctuation: #64748b;
+  --hl-tag: #116329;
+  --hl-attr: #0550ae;
+  --hl-diff-add: #15803d;
+  --hl-diff-del: #b91c1c;
+  --hl-cmd: #0969da;
+  --hl-subcmd: #15803d;
+  --hl-flag: #953800;
+}
+
+[data-theme="github-dark"] {
+  --bg-page: #0d1117;
+  --bg-panel: #161b22;
+  --text-main: #e6edf3;
+  --text-muted: #848d97;
+  --border-subtle: #30363d;
+  --border-muted: #21262d;
+  --accent: #2f81f7;
+  --accent-hover: #58a6ff;
+  --link-color: #58a6ff;
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
+
+  /* Code Card */
+  --code-bg: #161b22;
+  --code-header-bg: #1c2128;
+  --code-border: #30363d;
+  --code-line-border: #262c36;
+  --code-line-num: #6e7681;
+  --code-inline-bg: #21262d;
+  --code-inline-border: #30363d;
+  --code-inline-text: #e6edf3;
+
+  --code-badge-bg: #21262d;
+  --code-badge-border: #30363d;
+  --code-badge-text: #8b949e;
+
+  --code-btn-bg: #21262d;
+  --code-btn-hover: #30363d;
+  --code-btn-text: #c9d1d9;
+  --code-btn-border: #30363d;
+
+  /* Tables & Quotes */
+  --table-header-bg: #161b22;
+  --table-row-zebra: #11151c;
+  --quote-bg: #161b22;
+  --quote-border: #2f81f7;
+  --quote-text: #8b949e;
+
+  /* Callouts */
+  --alert-note-bg: rgba(31, 111, 235, 0.12); --alert-note-border: #1f6feb; --alert-note-text: #58a6ff;
+  --alert-tip-bg: rgba(35, 134, 54, 0.12); --alert-tip-border: #238636; --alert-tip-text: #3fb950;
+  --alert-important-bg: rgba(137, 87, 229, 0.12); --alert-important-border: #8957e5; --alert-important-text: #bc8cff;
+  --alert-warning-bg: rgba(187, 128, 9, 0.12); --alert-warning-border: #bb8009; --alert-warning-text: #d29922;
+  --alert-caution-bg: rgba(218, 54, 51, 0.12); --alert-caution-border: #da3633; --alert-caution-text: #f85149;
+
+  /* Syntax Highlighting */
+  --hl-keyword: #ff7b72;
+  --hl-type: #ffa657;
+  --hl-string: #a5d6ff;
+  --hl-comment: #8b949e;
+  --hl-number: #79c0ff;
+  --hl-function: #d2a8ff;
+  --hl-property: #79c0ff;
+  --hl-variable: #ffa657;
+  --hl-operator: #ff7b72;
+  --hl-punctuation: #8b949e;
+  --hl-tag: #7ee787;
+  --hl-attr: #79c0ff;
+  --hl-diff-add: #7ee787;
+  --hl-diff-del: #ffa198;
+  --hl-cmd: #58a6ff;
+  --hl-subcmd: #7ee787;
+  --hl-flag: #ffa657;
+}
+
+[data-theme="dracula"] {
+  --bg-page: #282a36;
+  --bg-panel: #21222c;
+  --text-main: #f8f8f2;
+  --text-muted: #6272a4;
+  --border-subtle: #44475a;
+  --border-muted: #383a59;
+  --accent: #bd93f9;
+  --accent-hover: #ff79c6;
+  --link-color: #8be9fd;
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.5);
+
+  /* Code Card */
+  --code-bg: #1e1f29;
+  --code-header-bg: #242633;
+  --code-border: #44475a;
+  --code-line-border: #343746;
+  --code-line-num: #6272a4;
+  --code-inline-bg: #44475a;
+  --code-inline-border: #6272a4;
+  --code-inline-text: #f1fa8c;
+
+  --code-badge-bg: #44475a;
+  --code-badge-border: #6272a4;
+  --code-badge-text: #bd93f9;
+
+  --code-btn-bg: #44475a;
+  --code-btn-hover: #6272a4;
+  --code-btn-text: #f8f8f2;
+  --code-btn-border: #6272a4;
+
+  /* Tables & Quotes */
+  --table-header-bg: #21222c;
+  --table-row-zebra: #1f202a;
+  --quote-bg: #21222c;
+  --quote-border: #bd93f9;
+  --quote-text: #f8f8f2;
+
+  /* Callouts */
+  --alert-note-bg: rgba(139, 233, 253, 0.14); --alert-note-border: #8be9fd; --alert-note-text: #8be9fd;
+  --alert-tip-bg: rgba(80, 250, 123, 0.14); --alert-tip-border: #50fa7b; --alert-tip-text: #50fa7b;
+  --alert-important-bg: rgba(189, 147, 249, 0.14); --alert-important-border: #bd93f9; --alert-important-text: #bd93f9;
+  --alert-warning-bg: rgba(255, 184, 108, 0.14); --alert-warning-border: #ffb86c; --alert-warning-text: #ffb86c;
+  --alert-caution-bg: rgba(255, 85, 85, 0.14); --alert-caution-border: #ff5555; --alert-caution-text: #ff5555;
+
+  /* Syntax Highlighting */
+  --hl-keyword: #ff79c6;
+  --hl-type: #8be9fd;
+  --hl-string: #f1fa8c;
+  --hl-comment: #6272a4;
+  --hl-number: #bd93f9;
+  --hl-function: #50fa7b;
+  --hl-property: #ffb86c;
+  --hl-variable: #f8f8f2;
+  --hl-operator: #ff79c6;
+  --hl-punctuation: #f8f8f2;
+  --hl-tag: #ff79c6;
+  --hl-attr: #50fa7b;
+  --hl-diff-add: #50fa7b;
+  --hl-diff-del: #ff5555;
+  --hl-cmd: #8be9fd;
+  --hl-subcmd: #50fa7b;
+  --hl-flag: #ffb86c;
+}
+
+[data-theme="nord"] {
+  --bg-page: #2e3440;
+  --bg-panel: #3b4252;
+  --text-main: #eceff4;
+  --text-muted: #7b88a1;
+  --border-subtle: #434c5e;
+  --border-muted: #3b4252;
+  --accent: #88c0d0;
+  --accent-hover: #81a1c1;
+  --link-color: #88c0d0;
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
+
+  /* Code Card */
+  --code-bg: #242933;
+  --code-header-bg: #2b303c;
+  --code-border: #434c5e;
+  --code-line-border: #353c4a;
+  --code-line-num: #616e88;
+  --code-inline-bg: #3b4252;
+  --code-inline-border: #434c5e;
+  --code-inline-text: #eceff4;
+
+  --code-badge-bg: #3b4252;
+  --code-badge-border: #434c5e;
+  --code-badge-text: #88c0d0;
+
+  --code-btn-bg: #3b4252;
+  --code-btn-hover: #434c5e;
+  --code-btn-text: #d8dee9;
+  --code-btn-border: #434c5e;
+
+  /* Tables & Quotes */
+  --table-header-bg: #3b4252;
+  --table-row-zebra: #272c36;
+  --quote-bg: #3b4252;
+  --quote-border: #88c0d0;
+  --quote-text: #e5e9f0;
+
+  /* Callouts */
+  --alert-note-bg: rgba(136, 192, 208, 0.14); --alert-note-border: #88c0d0; --alert-note-text: #88c0d0;
+  --alert-tip-bg: rgba(163, 190, 140, 0.14); --alert-tip-border: #a3be8c; --alert-tip-text: #a3be8c;
+  --alert-important-bg: rgba(180, 142, 173, 0.14); --alert-important-border: #b48ead; --alert-important-text: #b48ead;
+  --alert-warning-bg: rgba(235, 203, 139, 0.14); --alert-warning-border: #ebcb8b; --alert-warning-text: #ebcb8b;
+  --alert-caution-bg: rgba(191, 97, 106, 0.14); --alert-caution-border: #bf616a; --alert-caution-text: #bf616a;
+
+  /* Syntax Highlighting */
+  --hl-keyword: #81a1c1;
+  --hl-type: #8fbcbb;
+  --hl-string: #a3be8c;
+  --hl-comment: #616e88;
+  --hl-number: #b48ead;
+  --hl-function: #88c0d0;
+  --hl-property: #d8dee9;
+  --hl-variable: #d8dee9;
+  --hl-operator: #81a1c1;
+  --hl-punctuation: #eceff4;
+  --hl-tag: #81a1c1;
+  --hl-attr: #8fbcbb;
+  --hl-diff-add: #a3be8c;
+  --hl-diff-del: #bf616a;
+  --hl-cmd: #88c0d0;
+  --hl-subcmd: #8fbcbb;
+  --hl-flag: #d08770;
+}
+
+[data-theme="one-dark"] {
+  --bg-page: #282c34;
+  --bg-panel: #21252b;
+  --text-main: #abb2bf;
+  --text-muted: #5c6370;
+  --border-subtle: #3e4451;
+  --border-muted: #323842;
+  --accent: #61afef;
+  --accent-hover: #4daafc;
+  --link-color: #61afef;
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.45);
+
+  /* Code Card */
+  --code-bg: #1e2227;
+  --code-header-bg: #23272e;
+  --code-border: #3e4451;
+  --code-line-border: #2c313a;
+  --code-line-num: #5c6370;
+  --code-inline-bg: #2c313c;
+  --code-inline-border: #3e4451;
+  --code-inline-text: #e5c07b;
+
+  --code-badge-bg: #2c313c;
+  --code-badge-border: #3e4451;
+  --code-badge-text: #61afef;
+
+  --code-btn-bg: #2c313c;
+  --code-btn-hover: #3e4451;
+  --code-btn-text: #abb2bf;
+  --code-btn-border: #3e4451;
+
+  /* Tables & Quotes */
+  --table-header-bg: #21252b;
+  --table-row-zebra: #1f2329;
+  --quote-bg: #21252b;
+  --quote-border: #61afef;
+  --quote-text: #abb2bf;
+
+  /* Callouts */
+  --alert-note-bg: rgba(97, 175, 239, 0.14); --alert-note-border: #61afef; --alert-note-text: #61afef;
+  --alert-tip-bg: rgba(152, 195, 121, 0.14); --alert-tip-border: #98c379; --alert-tip-text: #98c379;
+  --alert-important-bg: rgba(198, 120, 221, 0.14); --alert-important-border: #c678dd; --alert-important-text: #c678dd;
+  --alert-warning-bg: rgba(229, 192, 123, 0.14); --alert-warning-border: #e5c07b; --alert-warning-text: #e5c07b;
+  --alert-caution-bg: rgba(224, 108, 117, 0.14); --alert-caution-border: #e06c75; --alert-caution-text: #e06c75;
+
+  /* Syntax Highlighting */
+  --hl-keyword: #c678dd;
+  --hl-type: #e5c07b;
+  --hl-string: #98c379;
+  --hl-comment: #5c6370;
+  --hl-number: #d19a66;
+  --hl-function: #61afef;
+  --hl-property: #e06c75;
+  --hl-variable: #e06c75;
+  --hl-operator: #56b6c2;
+  --hl-punctuation: #abb2bf;
+  --hl-tag: #e06c75;
+  --hl-attr: #d19a66;
+  --hl-diff-add: #98c379;
+  --hl-diff-del: #e06c75;
+  --hl-cmd: #61afef;
+  --hl-subcmd: #98c379;
+  --hl-flag: #d19a66;
+}
+
+[data-theme="vitepress"] {
+  --bg-page: #ffffff;
+  --bg-panel: #f6f6f7;
+  --text-main: #213547;
+  --text-muted: #606067;
+  --border-subtle: #e2e2e3;
+  --border-muted: #ebebef;
+  --accent: #10b981;
+  --accent-hover: #059669;
+  --link-color: #10b981;
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.06);
+
+  /* Code Card */
+  --code-bg: #f6f8fa;
+  --code-header-bg: #eef0f3;
+  --code-border: #e2e8f0;
+  --code-line-border: #e2e8f0;
+  --code-line-num: #94a3b8;
+  --code-inline-bg: #f1f5f9;
+  --code-inline-border: #e2e8f0;
+  --code-inline-text: #0f172a;
+
+  --code-badge-bg: #ffffff;
+  --code-badge-border: #cbd5e1;
+  --code-badge-text: #10b981;
+
+  --code-btn-bg: #ffffff;
+  --code-btn-hover: #f1f5f9;
+  --code-btn-text: #475569;
+  --code-btn-border: #cbd5e1;
+
+  /* Tables & Quotes */
+  --table-header-bg: #f6f6f7;
+  --table-row-zebra: #fcfcfd;
+  --quote-bg: #f6f6f7;
+  --quote-border: #10b981;
+  --quote-text: #475569;
+
+  /* Callouts */
+  --alert-note-bg: #f0f9ff; --alert-note-border: #0ea5e9; --alert-note-text: #0284c7;
+  --alert-tip-bg: #ecfdf5; --alert-tip-border: #10b981; --alert-tip-text: #059669;
+  --alert-important-bg: #faf5ff; --alert-important-border: #a855f7; --alert-important-text: #7e22ce;
+  --alert-warning-bg: #fffbeb; --alert-warning-border: #f59e0b; --alert-warning-text: #b45309;
+  --alert-caution-bg: #fef2f2; --alert-caution-border: #ef4444; --alert-caution-text: #b91c1c;
+
+  /* Syntax Highlighting */
+  --hl-keyword: #cf222e;
+  --hl-type: #10b981;
+  --hl-string: #0a3069;
+  --hl-comment: #64748b;
+  --hl-number: #0550ae;
+  --hl-function: #8250df;
+  --hl-property: #10b981;
+  --hl-variable: #953800;
+  --hl-operator: #0f172a;
+  --hl-punctuation: #64748b;
+  --hl-tag: #10b981;
+  --hl-attr: #0550ae;
+  --hl-diff-add: #10b981;
+  --hl-diff-del: #ef4444;
+  --hl-cmd: #10b981;
+  --hl-subcmd: #059669;
+  --hl-flag: #953800;
+}
+
+[data-theme="vscode-dark"] {
+  --bg-page: #1e1e1e;
+  --bg-panel: #252526;
+  --text-main: #cccccc;
+  --text-muted: #858585;
+  --border-subtle: #3c3c3c;
+  --border-muted: #2d2d2d;
+  --accent: #007acc;
+  --accent-hover: #1f8ad2;
+  --link-color: #3794ff;
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.5);
+
+  /* Code Card */
+  --code-bg: #1e1e1e;
+  --code-header-bg: #252526;
+  --code-border: #333333;
+  --code-line-border: #2a2d2e;
+  --code-line-num: #858585;
+  --code-inline-bg: #2d2d2d;
+  --code-inline-border: #383838;
+  --code-inline-text: #d4d4d4;
+
+  --code-badge-bg: #2d2d2d;
+  --code-badge-border: #383838;
+  --code-badge-text: #9d9d9d;
+
+  --code-btn-bg: #2d2d2d;
+  --code-btn-hover: #383838;
+  --code-btn-text: #cccccc;
+  --code-btn-border: #383838;
+
+  /* Tables & Quotes */
+  --table-header-bg: #252526;
+  --table-row-zebra: #212121;
+  --quote-bg: #252526;
+  --quote-border: #007acc;
+  --quote-text: #858585;
+
+  /* Callouts */
+  --alert-note-bg: rgba(0, 122, 204, 0.14); --alert-note-border: #007acc; --alert-note-text: #3794ff;
+  --alert-tip-bg: rgba(56, 138, 52, 0.14); --alert-tip-border: #388a34; --alert-tip-text: #89d185;
+  --alert-important-bg: rgba(162, 85, 189, 0.14); --alert-important-border: #a255bd; --alert-important-text: #c586c0;
+  --alert-warning-bg: rgba(204, 167, 0, 0.14); --alert-warning-border: #cca700; --alert-warning-text: #e2c08d;
+  --alert-caution-bg: rgba(241, 76, 76, 0.14); --alert-caution-border: #f14c4c; --alert-caution-text: #f48771;
+
+  /* Syntax Highlighting */
+  --hl-keyword: #569cd6;
+  --hl-type: #4ec9b0;
+  --hl-string: #ce9178;
+  --hl-comment: #6a9955;
+  --hl-number: #b5cea8;
+  --hl-function: #dcdcaa;
+  --hl-property: #9cdcfe;
+  --hl-variable: #9cdcfe;
+  --hl-operator: #d4d4d4;
+  --hl-punctuation: #808080;
+  --hl-tag: #569cd6;
+  --hl-attr: #9cdcfe;
+  --hl-diff-add: #89d185;
+  --hl-diff-del: #f48771;
+  --hl-cmd: #4fc1ff;
+  --hl-subcmd: #dcdcaa;
+  --hl-flag: #9cdcfe;
+}
+
+[data-theme="paper"] {
+  --bg-page: #fffaf0;
+  --bg-panel: #f7f0e1;
+  --text-main: #3b3228;
+  --text-muted: #76695a;
+  --border-subtle: #d7c9b4;
+  --border-muted: #e5dac9;
+  --accent: #9a5b2d;
+  --accent-hover: #7d4721;
+  --link-color: #9a5b2d;
+  --shadow-card: 0 4px 16px rgba(154, 91, 45, 0.08);
+
+  /* Code Card */
+  --code-bg: #f4ece0;
+  --code-header-bg: #e9decb;
+  --code-border: #d8ccb5;
+  --code-line-border: #ded2bd;
+  --code-line-num: #8c7e6d;
+  --code-inline-bg: #f0e6d5;
+  --code-inline-border: #d8ccb5;
+  --code-inline-text: #3b3228;
+
+  --code-badge-bg: #f7f0e1;
+  --code-badge-border: #d8ccb5;
+  --code-badge-text: #66594c;
+
+  --code-btn-bg: #f7f0e1;
+  --code-btn-hover: #ece1ce;
+  --code-btn-text: #5c4e3f;
+  --code-btn-border: #d8ccb5;
+
+  /* Tables & Quotes */
+  --table-header-bg: #f7f0e1;
+  --table-row-zebra: #fdf6ea;
+  --quote-bg: #f7f0e1;
+  --quote-border: #9a5b2d;
+  --quote-text: #76695a;
+
+  /* Callouts */
+  --alert-note-bg: #eaf1f7; --alert-note-border: #4a7c9f; --alert-note-text: #2f5f80;
+  --alert-tip-bg: #edf5ed; --alert-tip-border: #4d8f58; --alert-tip-text: #2d6b38;
+  --alert-important-bg: #f4eef9; --alert-important-border: #8b65a8; --alert-important-text: #6c4789;
+  --alert-warning-bg: #fbf5e4; --alert-warning-border: #b8862f; --alert-warning-text: #8e6216;
+  --alert-caution-bg: #fbeeed; --alert-caution-border: #bf4d4d; --alert-caution-text: #962f2f;
+
+  /* Syntax Highlighting */
+  --hl-keyword: #b82424;
+  --hl-type: #8f5902;
+  --hl-string: #1b7340;
+  --hl-comment: #8c7e6d;
+  --hl-number: #c24e00;
+  --hl-function: #7030a0;
+  --hl-property: #1b7340;
+  --hl-variable: #8f5902;
+  --hl-operator: #3b3228;
+  --hl-punctuation: #76695a;
+  --hl-tag: #b82424;
+  --hl-attr: #8f5902;
+  --hl-diff-add: #1b7340;
+  --hl-diff-del: #b82424;
+  --hl-cmd: #9a5b2d;
+  --hl-subcmd: #1b7340;
+  --hl-flag: #8f5902;
+}
+
+/* --------------------------------------------------------------------------
+   2. Base Document Layout & Reset
+   -------------------------------------------------------------------------- */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans", Helvetica, Arial, sans-serif;
+  font-size: 15.5px;
+  line-height: 1.72;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+  user-select: text;
+}
+
+#markdown-container {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 40px 48px 140px 48px;
+}
+
+/* --------------------------------------------------------------------------
+   3. Typography & Hierarchy
+   -------------------------------------------------------------------------- */
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-main);
+  font-weight: 600;
+  line-height: 1.35;
+  margin-top: 1.8em;
+  margin-bottom: 0.6em;
+  scroll-margin-top: 24px;
+}
+
+h1 {
+  font-size: 2.2em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  padding-bottom: 0.4em;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-top: 0.2em;
+}
+
+h2 {
+  font-size: 1.6em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  padding-bottom: 0.35em;
+  border-bottom: 1px solid var(--border-muted);
+}
+
+h3 { font-size: 1.3em; font-weight: 600; }
+h4 { font-size: 1.12em; font-weight: 600; }
+h5 { font-size: 0.98em; font-weight: 600; }
+h6 { font-size: 0.88em; color: var(--text-muted); font-weight: 500; }
+
+p {
+  margin-top: 0;
+  margin-bottom: 1.15em;
+  word-break: break-word;
+}
+
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+a:hover {
+  text-decoration: underline;
+  color: var(--accent-hover);
+}
+
+strong { font-weight: 600; }
+em { font-style: italic; }
+
+hr {
+  height: 1px;
+  padding: 0;
+  margin: 32px 0;
+  background-color: var(--border-subtle);
+  border: 0;
+}
+
+/* --------------------------------------------------------------------------
+   4. Lists & Tasks
+   -------------------------------------------------------------------------- */
+
+ul, ol {
+  margin-top: 0;
+  margin-bottom: 1.15em;
+  padding-left: 2em;
+}
+
+li {
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+}
+
+li > p {
+  margin-bottom: 0.5em;
+}
+
+ul.contains-task-list {
+  list-style-type: none;
+  padding-left: 0.4em;
+}
+.task-list-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.task-list-item input[type="checkbox"] {
+  accent-color: var(--accent);
+  cursor: pointer;
+  transform: translateY(2px);
+}
+
+/* --------------------------------------------------------------------------
+   5. Blockquotes & GitHub Callout Alerts
+   -------------------------------------------------------------------------- */
+
+blockquote {
+  margin: 1.3em 0;
+  padding: 0.8em 1.2em;
+  color: var(--quote-text);
+  background-color: var(--quote-bg);
+  border-left: 4px solid var(--quote-border);
+  border-radius: 0 8px 8px 0;
+}
+
+blockquote > :first-child { margin-top: 0; }
+blockquote > :last-child { margin-bottom: 0; }
+
+.markdown-alert {
+  margin: 1.5em 0;
+  padding: 14px 18px;
+  border-left: 4px solid;
+  border-radius: 8px;
+  font-size: 14.5px;
+}
+.markdown-alert-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.markdown-alert-title svg {
+  width: 17px;
+  height: 17px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+.markdown-alert > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown-alert-note { background-color: var(--alert-note-bg); border-color: var(--alert-note-border); color: var(--text-main); }
+.markdown-alert-note .markdown-alert-title { color: var(--alert-note-text); }
+
+.markdown-alert-tip { background-color: var(--alert-tip-bg); border-color: var(--alert-tip-border); color: var(--text-main); }
+.markdown-alert-tip .markdown-alert-title { color: var(--alert-tip-text); }
+
+.markdown-alert-important { background-color: var(--alert-important-bg); border-color: var(--alert-important-border); color: var(--text-main); }
+.markdown-alert-important .markdown-alert-title { color: var(--alert-important-text); }
+
+.markdown-alert-warning { background-color: var(--alert-warning-bg); border-color: var(--alert-warning-border); color: var(--text-main); }
+.markdown-alert-warning .markdown-alert-title { color: var(--alert-warning-text); }
+
+.markdown-alert-caution { background-color: var(--alert-caution-bg); border-color: var(--alert-caution-border); color: var(--text-main); }
+.markdown-alert-caution .markdown-alert-title { color: var(--alert-caution-text); }
+
+/* --------------------------------------------------------------------------
+   6. Modern Tables
+   -------------------------------------------------------------------------- */
+
+table {
+  width: 100%;
+  max-width: 100%;
+  margin: 1.5em 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+th, td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-muted);
+  border-right: 1px solid var(--border-muted);
+  text-align: left;
+  font-size: 14.5px;
+}
+
+th:last-child, td:last-child {
+  border-right: none;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+th {
+  background-color: var(--table-header-bg);
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+tbody tr:nth-child(2n) {
+  background-color: var(--table-row-zebra);
+}
+
+/* --------------------------------------------------------------------------
+   7. Inline Code & Modern Code Block Cards
+   -------------------------------------------------------------------------- */
+
+code, pre, kbd, samp {
+  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", "SFMono-Regular", Consolas, Menlo, Monaco, "Liberation Mono", monospace !important;
+}
+
+code:not([class*="language-"]) {
+  font-size: 0.88em;
+  padding: 0.2em 0.45em;
+  background-color: var(--code-inline-bg);
+  color: var(--code-inline-text);
+  border-radius: 5px;
+  border: 1px solid var(--code-inline-border);
+}
+
+/* Modern Card Container */
+.code-card {
+  position: relative;
+  margin: 1.6em 0 2em 0;
+  background-color: var(--code-bg);
+  border: 1px solid var(--code-border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Card Header Bar */
+.code-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 38px;
+  padding: 0 14px;
+  background-color: var(--code-header-bg);
+  border-bottom: 1px solid var(--code-border);
+  user-select: none;
+}
+
+.code-card-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Traffic light dots */
+.mac-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.mac-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.mac-dot.red { background-color: #ff5f56; }
+.mac-dot.yellow { background-color: #ffbd2e; }
+.mac-dot.green { background-color: #27c93f; }
+
+/* Language Pill Badge */
+.code-lang-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-family: "JetBrains Mono", "Cascadia Code", Consolas, monospace !important;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--code-badge-text);
+  background-color: var(--code-badge-bg);
+  border: 1px solid var(--code-badge-border);
+  border-radius: 6px;
+}
+
+/* Sleek Copy Button */
+.code-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--code-btn-text);
+  background-color: var(--code-btn-bg);
+  border: 1px solid var(--code-btn-border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.code-copy-btn svg {
+  width: 13px;
+  height: 13px;
+  fill: currentColor;
+}
+
+.code-copy-btn:hover {
+  background-color: var(--code-btn-hover);
+  color: var(--text-main);
+  border-color: var(--accent);
+}
+
+.code-copy-btn.copied {
+  color: var(--alert-tip-text);
+  border-color: var(--alert-tip-border);
+  background-color: var(--alert-tip-bg);
+}
+
+/* Card Body & Dual Column Alignment */
+.code-card-body {
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--code-bg);
+}
+
+.line-numbers-col {
+  flex-shrink: 0;
+  width: 44px;
+  min-width: 44px;
+  padding: 14px 10px 16px 0;
+  margin: 0;
+  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", Consolas, monospace !important;
+  font-size: 13.5px !important;
+  line-height: 1.65 !important;
+  color: var(--code-line-num);
+  text-align: right;
+  white-space: pre !important;
+  user-select: none;
+  border-right: 1px solid var(--code-line-border);
+  background-color: var(--code-bg);
+}
+
+.code-content-col {
+  flex-grow: 1;
+  min-width: 0;
+  overflow-x: auto;
+  padding: 14px 18px 16px 14px;
+  background-color: var(--code-bg);
+}
+
+.code-content-col pre {
+  margin: 0;
+  padding: 0;
+  background: transparent !important;
+  border: none !important;
+  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", Consolas, monospace !important;
+  font-size: 13.5px !important;
+  line-height: 1.65 !important;
+  white-space: pre !important;
+  word-wrap: normal !important;
+  tab-size: 4;
+}
+
+.code-content-col pre code {
+  margin: 0;
+  padding: 0;
+  background: transparent !important;
+  border: none !important;
+  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", Consolas, monospace !important;
+  font-size: 13.5px !important;
+  line-height: 1.65 !important;
+  white-space: pre !important;
+  color: var(--text-main);
+}
+
+/* --------------------------------------------------------------------------
+   8. Syntax Highlighting Token Palette
+   -------------------------------------------------------------------------- */
+
+.token.comment, .token.prolog, .token.doctype, .token.cdata { color: var(--hl-comment); font-style: italic; }
+.token.punctuation { color: var(--hl-punctuation); }
+.token.property, .token.tag, .token.boolean, .token.number, .token.constant, .token.symbol, .token.deleted { color: var(--hl-number); font-weight: 500; }
+.token.selector, .token.attr-name, .token.string, .token.char, .token.builtin, .token.inserted { color: var(--hl-string); }
+.token.operator, .token.entity, .token.url, .language-css .token.string, .style .token.string { color: var(--hl-operator); }
+.token.atrule, .token.attr-value, .token.keyword { color: var(--hl-keyword); font-weight: 600; }
+.token.function, .token.class-name { color: var(--hl-function); font-weight: 600; }
+.token.regex, .token.important, .token.variable { color: var(--hl-variable); }
+
+/* CLI / Shell tokens */
+.token.cmd { color: var(--hl-cmd); font-weight: 600; }
+.token.subcmd { color: var(--hl-subcmd); font-weight: 600; }
+.token.flag { color: var(--hl-flag); font-weight: 500; }
+
+/* Diff tokens */
+.token.diff-add { color: var(--hl-diff-add); background-color: rgba(34, 197, 94, 0.15); display: inline-block; width: 100%; border-radius: 3px; }
+.token.diff-del { color: var(--hl-diff-del); background-color: rgba(239, 68, 68, 0.15); display: inline-block; width: 100%; border-radius: 3px; }
+
+/* --------------------------------------------------------------------------
+   9. Diagrams & Media
+   -------------------------------------------------------------------------- */
+
+.mermaid-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2.2em 0;
+  padding: 20px;
+  background-color: var(--code-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  box-shadow: var(--shadow-card);
+  overflow-x: auto;
+}
+
+.mermaid-container svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* --------------------------------------------------------------------------
+   10. Sleek Custom Scrollbars
+   -------------------------------------------------------------------------- */
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--border-subtle);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-muted);
+}
+
+  </style>
+</head>
+<body>
+  <div id="markdown-container"></div>
+  <script>
+/* PrismJS 1.29.0 - Lightweight syntax highlighter */
+var _self = "undefined" != typeof window ? window : "undefined" != typeof WorkerGlobalScope && self instanceof WorkerGlobalScope ? self : {},
+    Prism = function(e) {
+        var n = /(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,
+            t = 0,
+            r = {},
+            a = {
+                manual: e.Prism && e.Prism.manual,
+                disableWorkerMessageHandler: e.Prism && e.Prism.disableWorkerMessageHandler,
+                util: {
+                    encode: function e(n) {
+                        return n instanceof i ? new i(n.type, e(n.content), n.alias) : Array.isArray(n) ? n.map(e) : n.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\u00a0/g, " ")
+                    },
+                    type: function(e) {
+                        return Object.prototype.toString.call(e).slice(8, -1)
+                    },
+                    objId: function(e) {
+                        return e.__id || Object.defineProperty(e, "__id", {
+                            value: ++t
+                        }), e.__id
+                    },
+                    clone: function e(n, t) {
+                        var r, i;
+                        switch (t = t || {}, a.util.type(n)) {
+                            case "Object":
+                                if (i = a.util.objId(n), t[i]) return t[i];
+                                for (var l in r = {}, t[i] = r, n) n.hasOwnProperty(l) && (r[l] = e(n[l], t));
+                                return r;
+                            case "Array":
+                                return i = a.util.objId(n), t[i] ? t[i] : (r = [], t[i] = r, n.forEach((function(n, a) {
+                                    r[a] = e(n, t)
+                                })), r);
+                            default:
+                                return n
+                        }
+                    },
+                    getLanguage: function(e) {
+                        for (; e;) {
+                            var t = n.exec(e.className);
+                            if (t) return t[1].toLowerCase();
+                            e = e.parentElement
+                        }
+                        return "none"
+                    },
+                    setLanguage: function(e, t) {
+                        e.className = e.className.replace(RegExp(n, "gi"), ""), e.classList.add("language-" + t)
+                    },
+                    currentScript: function() {
+                        if ("undefined" == typeof document) return null;
+                        if ("currentScript" in document) return document.currentScript;
+                        try {
+                            throw new Error
+                        } catch (r) {
+                            var e = (/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(r.stack) || [])[1];
+                            if (e) {
+                                var n = document.getElementsByTagName("script");
+                                for (var t in n)
+                                    if (n[t].src == e) return n[t]
+                            }
+                            return null
+                        }
+                    },
+                    isActive: function(e, n, t) {
+                        for (var r = "no-" + n; e;) {
+                            var a = e.classList;
+                            if (a.contains(n)) return !0;
+                            if (a.contains(r)) return !1;
+                            e = e.parentElement
+                        }
+                        return !!t
+                    }
+                },
+                languages: {
+                    plain: r,
+                    plaintext: r,
+                    text: r,
+                    txt: r,
+                    extend: function(e, n) {
+                        var t = a.util.clone(a.languages[e]);
+                        for (var r in n) t[r] = n[r];
+                        return t
+                    },
+                    insertBefore: function(e, n, t, r) {
+                        var i = (r = r || a.languages)[e],
+                            l = {};
+                        for (var o in i)
+                            if (i.hasOwnProperty(o)) {
+                                if (o == n)
+                                    for (var s in t) t.hasOwnProperty(s) && (l[s] = t[s]);
+                                t.hasOwnProperty(o) || (l[o] = i[o])
+                            }
+                        var u = r[e];
+                        return r[e] = l, a.languages.DFS(a.languages, (function(n, t) {
+                            t === u && n != e && (this[n] = l)
+                        })), l
+                    },
+                    DFS: function e(n, t, r, i) {
+                        i = i || {};
+                        var l = a.util.objId;
+                        for (var o in n)
+                            if (n.hasOwnProperty(o)) {
+                                t.call(n, o, n[o], r || o);
+                                var s = n[o],
+                                    u = a.util.type(s);
+                                "Object" !== u || i[l(s)] ? "Array" !== u || i[l(s)] || (i[l(s)] = !0, e(s, t, o, i)) : (i[l(s)] = !0, e(s, t, null, i))
+                            }
+                    }
+                },
+                plugins: {},
+                highlightAll: function(e, n) {
+                    a.highlightAllUnder(document, e, n)
+                },
+                highlightAllUnder: function(e, n, t) {
+                    var r = {
+                        callback: t,
+                        container: e,
+                        selector: 'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'
+                    };
+                    a.hooks.run("before-highlightall", r), r.elements = Array.prototype.slice.apply(r.container.querySelectorAll(r.selector)), a.hooks.run("before-all-elements-highlight", r);
+                    for (var i, l = 0; i = r.elements[l++];) a.highlightElement(i, !0 === n, r.callback)
+                },
+                highlightElement: function(n, t, r) {
+                    var i = a.util.getLanguage(n),
+                        l = a.languages[i];
+                    a.util.setLanguage(n, i);
+                    var o = n.parentElement;
+                    o && "pre" === o.nodeName.toLowerCase() && a.util.setLanguage(o, i);
+                    var s = {
+                        element: n,
+                        language: i,
+                        grammar: l,
+                        code: n.textContent
+                    };
+
+                    function u(e) {
+                        s.highlightedCode = e, a.hooks.run("before-insert", s), s.element.innerHTML = s.highlightedCode, a.hooks.run("after-highlight", s), a.hooks.run("complete", s), r && r.call(s.element)
+                    }
+                    if (a.hooks.run("before-sanity-check", s), (o = s.element.parentElement) && "pre" === o.nodeName.toLowerCase() && !o.hasAttribute("tabindex") && o.setAttribute("tabindex", "0"), !s.code) return a.hooks.run("complete", s), void(r && r.call(s.element));
+                    if (a.hooks.run("before-highlight", s), s.grammar)
+                        if (t && e.Worker) {
+                            var c = new Worker(a.filename);
+                            c.onmessage = function(e) {
+                                u(e.data)
+                            }, c.postMessage(JSON.stringify({
+                                language: s.language,
+                                code: s.code,
+                                immediateClose: !0
+                            }))
+                        } else u(a.highlight(s.code, s.grammar, s.language));
+                    else u(a.util.encode(s.code))
+                },
+                highlight: function(e, n, t) {
+                    var r = {
+                        code: e,
+                        grammar: n,
+                        language: t
+                    };
+                    if (a.hooks.run("before-tokenize", r), !r.grammar) throw new Error('The language "' + r.language + '" has no grammar.');
+                    return r.tokens = a.tokenize(r.code, r.grammar), a.hooks.run("after-tokenize", r), i.stringify(a.util.encode(r.tokens), r.language)
+                },
+                tokenize: function(e, n) {
+                    var t = n.rest;
+                    if (t) {
+                        for (var r in t) n[r] = t[r];
+                        delete n.rest
+                    }
+                    var a = new s;
+                    return u(a, a.head, e), o(e, a, n, a.head, 0),
+                        function(e) {
+                            for (var n = [], t = e.head.next; t !== e.tail;) n.push(t.value), t = t.next;
+                            return n
+                        }(a)
+                },
+                hooks: {
+                    all: {},
+                    add: function(e, n) {
+                        var t = a.hooks.all;
+                        t[e] = t[e] || [], t[e].push(n)
+                    },
+                    run: function(e, n) {
+                        var t = a.hooks.all[e];
+                        if (t && t.length)
+                            for (var r, i = 0; r = t[i++];) r(n)
+                    }
+                },
+                Token: i
+            };
+
+        function i(e, n, t, r) {
+            this.type = e, this.content = n, this.alias = t, this.length = 0 | (r || "").length
+        }
+
+        function l(e, n, t, r) {
+            e.lastIndex = n;
+            var a = e.exec(t);
+            if (a && r && a[1]) {
+                var i = a[1].length;
+                a.index += i, a[0] = a[0].slice(i)
+            }
+            return a
+        }
+
+        function o(e, n, t, r, s, g) {
+            for (var f in t)
+                if (t.hasOwnProperty(f) && t[f]) {
+                    var d = t[f];
+                    d = Array.isArray(d) ? d : [d];
+                    for (var p = 0; p < d.length; ++p) {
+                        if (g && g.cause == f + "," + p) return;
+                        var m = d[p],
+                            v = m.inside,
+                            h = !!m.lookbehind,
+                            b = !!m.greedy,
+                            y = m.alias;
+                        if (b && !m.pattern.global) {
+                            var k = m.pattern.toString().match(/[imsuy]*$/)[0];
+                            m.pattern = RegExp(m.pattern.source, k + "g")
+                        }
+                        for (var x = m.pattern || m, w = r.next, A = s; w !== n.tail; A += w.value.length, w = w.next) {
+                            if (g && A >= g.reach) return;
+                            var P = w.value;
+                            if (n.length > e.length) return;
+                            if (!(P instanceof i)) {
+                                var E, S = 1;
+                                if (b) {
+                                    if (!(E = l(x, A, e, h)) || E.index >= e.length) break;
+                                    var _ = E.index,
+                                        O = E.index + E[0].length,
+                                        N = A;
+                                    for (N += w.value.length; _ >= N;) N += (w = w.next).value.length;
+                                    if (A = N -= w.value.length, w.value instanceof i) continue;
+                                    for (var j = w; j !== n.tail && (N < O || "string" == typeof j.value); j = j.next) S++, N += j.value.length;
+                                    S--, P = e.slice(A, N), E.index -= A
+                                } else if (!(E = l(x, 0, P, h))) continue;
+                                _ = E.index;
+                                var C = E[0],
+                                    z = P.slice(0, _),
+                                    T = P.slice(_ + C.length),
+                                    L = A + P.length;
+                                g && L > g.reach && (g.reach = L);
+                                var I = w.prev;
+                                if (z && (I = u(n, I, z), A += z.length), c(n, I, S), w = u(n, I, new i(f, v ? a.tokenize(C, v) : C, y, C)), T && u(n, w, T), S > 1) {
+                                    var M = {
+                                        cause: f + "," + p,
+                                        reach: L
+                                    };
+                                    o(e, n, t, w.prev, A, M), g && M.reach > g.reach && (g.reach = M.reach)
+                                }
+                            }
+                        }
+                    }
+                }
+        }
+
+        function s() {
+            var e = {
+                    value: null,
+                    prev: null,
+                    next: null
+                },
+                n = {
+                    value: null,
+                    prev: e,
+                    next: null
+                };
+            e.next = n, this.head = e, this.tail = n, this.length = 0
+        }
+
+        function u(e, n, t) {
+            var r = n.next,
+                a = {
+                    value: t,
+                    prev: n,
+                    next: r
+                };
+            return n.next = a, r.prev = a, e.length++, a
+        }
+
+        function c(e, n, t) {
+            for (var r = n.next, a = 0; a < t && r !== e.tail; a++) r = r.next;
+            n.next = r, r.prev = n, e.length -= a
+        }
+        if (i.stringify = function e(n, t) {
+                if ("string" == typeof n) return n;
+                if (Array.isArray(n)) {
+                    var r = "";
+                    return n.forEach((function(n) {
+                        r += e(n, t)
+                    })), r
+                }
+                var l = {
+                        type: n.type,
+                        content: e(n.content, t),
+                        tag: "span",
+                        classes: ["token", n.type],
+                        attributes: {},
+                        language: t
+                    },
+                    o = n.alias;
+                o && (Array.isArray(o) ? Array.prototype.push.apply(l.classes, o) : l.classes.push(o)), a.hooks.run("wrap", l);
+                var s = "";
+                for (var u in l.attributes) s += " " + u + '="' + (l.attributes[u] || "").replace(/"/g, "&quot;") + '"';
+                return "<" + l.tag + ' class="' + l.classes.join(" ") + '"' + s + ">" + l.content + "</" + l.tag + ">"
+            }, !_self.document) return _self.Prism = a, a;
+        return a
+    }(_self);
+"undefined" != typeof module && module.exports && (module.exports = Prism);
+
+/* C-like, C, C++, C#, Java, Python, JS, TS, Bash, Rust, Go, SQL, JSON, YAML, Diff definitions */
+Prism.languages.clike = {
+    comment: [
+        { pattern: /(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/, lookbehind: !0, greedy: !0 },
+        { pattern: /(^|[^\\:])\/\/.*/, lookbehind: !0, greedy: !0 }
+    ],
+    string: { pattern: /(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/, greedy: !0 },
+    "class-name": { pattern: /(\b(?:class|interface|extends|implements|instanceof|new|struct|enum)\s+|\benum\s+class\s+|\busing\s+)\w+/i, lookbehind: !0, inside: { punctuation: /^class\s+/ } },
+    keyword: /\b(?:if|else|while|do|for|return|in|instanceof|function|new|try|throw|catch|finally|null|break|continue|switch|case|default|public|private|protected|static|const|virtual|override|explicit|template|typename|concept|requires|auto|void|int|float|double|char|bool|size_t|uint32_t|int32_t|uint64_t|int64_t|string)\b/,
+    boolean: /\b(?:true|false)\b/,
+    function: /\b\w+(?=\()/,
+    number: /\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,
+    operator: /[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,
+    punctuation: /[{}[\];(),.:]/
+};
+
+Prism.languages.c = Prism.languages.extend("clike", {
+    keyword: /\b(?:__attribute__|auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|inline|int|long|register|restrict|return|short|signed|sizeof|static|struct|switch|typedef|typeof|union|unsigned|void|volatile|while)\b/,
+    number: /(?:\b0x(?:[\da-f]+(?:\.[\da-f]*)?|\.[\da-f]+)(?:p[+-]?\d+)?|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?)[ful]{0,4}/i
+});
+
+Prism.languages.cpp = Prism.languages.extend("c", {
+    keyword: /\b(?:alignas|alignof|and|and_eq|asm|auto|bitand|bitor|bool|break|case|catch|char|char16_t|char32_t|char8_t|class|co_await|co_return|co_yield|compl|concept|const|const_cast|consteval|constexpr|constinit|continue|decltype|default|delete|do|double|dynamic_cast|else|enum|explicit|export|extern|false|final|float|for|friend|goto|if|import|inline|int|long|module|mutable|namespace|new|noexcept|not|not_eq|nullptr|operator|or|or_eq|override|private|protected|public|reflexpr|register|reinterpret_cast|requires|return|short|signed|sizeof|static|static_assert|static_cast|struct|switch|template|this|thread_local|throw|true|try|typedef|typeid|typename|union|unsigned|using|virtual|void|volatile|wchar_t|while|xor|xor_eq)\b/,
+    number: {
+        pattern: /(?:\b0b[01']+|\b0x(?:[\da-f']+(?:\.[\da-f']*)?|\.[\da-f']+)(?:p[+-]?[\d']+)?|(?:\b[\d']+(?:\.[\d']*)?|\B\.[\d']+)(?:e[+-]?[\d']+)?)[ful]{0,4}/i,
+        greedy: !0
+    }
+});
+
+Prism.languages.javascript = Prism.languages.extend("clike", {
+    "class-name": [
+        Prism.languages.clike["class-name"],
+        { pattern: /(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/, lookbehind: !0 }
+    ],
+    keyword: [
+        { pattern: /((?:^|\})\s*)catch\b/, lookbehind: !0 },
+        { pattern: /(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from(?=\s*(?:['"]|$))|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/, lookbehind: !0 }
+    ],
+    function: /#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[_$a-zA-Z0-9\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/
+});
+Prism.languages.js = Prism.languages.javascript;
+
+Prism.languages.typescript = Prism.languages.extend("javascript", {
+    keyword: /\b(?:abstract|as|asserts|async|await|break|case|catch|class|const|constructor|continue|debugger|declare|default|delete|do|else|enum|export|extends|false|finally|for|from|function|get|if|implements|import|in|infer|instanceof|interface|is|keyof|let|module|namespace|never|new|null|number|object|of|package|private|protected|public|readonly|require|global|return|set|static|string|super|switch|symbol|this|throw|true|try|type|typeof|undefined|unique|unknown|var|void|while|with|yield|any|boolean)\b/
+});
+Prism.languages.ts = Prism.languages.typescript;
+
+Prism.languages.python = {
+    comment: { pattern: /(^|[^\\])#.*/, lookbehind: !0, greedy: !0 },
+    "string-interpolation": {
+        pattern: /(?:f|fr|rf)(?:("""|''')[\s\S]*?\1|("|')(?:\\.|(?!\2)[^\\\r\n])*\2)/i,
+        greedy: !0,
+        inside: {
+            interpolation: {
+                pattern: /((?:^|[^{])(?:\{\{)*)\{(?!\{)(?:[^{}]|\{[^{}]*\})+\}/,
+                lookbehind: !0,
+                inside: { punctuation: /^\{|\}$/ }
+            },
+            string: /[\s\S]+/
+        }
+    },
+    string: { pattern: /(?:[rub]|rb|br)?(?:("""|''')[\s\S]*?\1|("|')(?:\\.|(?!\2)[^\\\r\n])*\2)/i, greedy: !0 },
+    decorator: { pattern: /(^[ \t]*)@\w+(?:\.\w+)*/m, lookbehind: !0, alias: "property" },
+    keyword: /\b(?:and|as|assert|async|await|break|class|continue|def|del|elif|else|except|exec|finally|for|from|global|if|import|in|is|lambda|match|nonlocal|not|or|pass|print|raise|return|try|while|with|yield|case)\b/,
+    boolean: /\b(?:False|None|True)\b/,
+    number: /\b0(?:b(?:_?[01])+|o(?:_?[0-7])+|x(?:_?[a-f0-9])+)\b|(?:\b\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\B\.\d+(?:_\d+)*)(?:e[+-]?\d+(?:_\d+)*)?j?\b/i,
+    operator: /[-+%=]=?|!=|\*\*?=?|\/\/?=?|<[<=]?|>[>=]?|[&|^~]/,
+    punctuation: /[{}[\];(),.:]/
+};
+Prism.languages.py = Prism.languages.python;
+
+/* Bash / Shell with CLI command/subcommand/flag tokenizer */
+Prism.languages.bash = {
+    comment: { pattern: /(^|[^#\\])#.*/, lookbehind: !0, greedy: !0 },
+    string: [
+        { pattern: /(["'])(?:\\[\s\S]|(?!\1)[^\\])*\1/, greedy: !0 },
+        { pattern: /\$([a-zA-Z_]\w*|\{[a-zA-Z_]\w*\})/, alias: "variable" }
+    ],
+    flag: { pattern: /(?:^|\s)-{1,2}[a-zA-Z0-9_-]+(?:=[^\s]*)?/, alias: "flag" },
+    cmd: { pattern: /(?:^|[;&|]\s*|\$\()\b(?:npm|yarn|pnpm|npx|node|bun|deno|git|docker|docker-compose|kubectl|cargo|rustc|go|python|python3|pip|pip3|gcc|g\+\+|clang|clang\+\+|make|cmake|ninja|curl|wget|tar|zip|unzip|sudo|apt|apt-get|brew|pacman|systemctl|journalctl|ssh|scp|cat|grep|sed|awk|ls|cd|mkdir|rm|cp|mv|echo|export|chmod|chown)\b/, alias: "cmd" },
+    subcmd: { pattern: /(?:\b(?:npm|yarn|pnpm|git|docker|cargo|go|pip)\s+)\b[a-zA-Z0-9_:-]+\b/, alias: "subcmd" },
+    keyword: /\b(?:if|then|else|elif|fi|for|while|in|do|done|case|esac|function|select|time|until)\b/,
+    boolean: /\b(?:true|false)\b/,
+    number: /\b\d+\b/,
+    operator: /&&|\|\||[;&|<>]=?|[-+*\/=]/,
+    punctuation: /[{}[\](),.:]/
+};
+Prism.languages.sh = Prism.languages.bash;
+Prism.languages.shell = Prism.languages.bash;
+Prism.languages.zsh = Prism.languages.bash;
+
+Prism.languages.json = {
+    property: { pattern: /(^|[^\\])"(?:\\.|[^\\"\r\n])*"(?=\s*:)/, lookbehind: !0, greedy: !0 },
+    string: { pattern: /(^|[^\\])"(?:\\.|[^\\"\r\n])*"(?!\s*:)/, lookbehind: !0, greedy: !0 },
+    number: /-?\b\d+(?:\.\d+)?(?:e[+-]?\d+)?\b/i,
+    punctuation: /[{}[\],]/,
+    operator: /:/,
+    boolean: /\b(?:false|true)\b/,
+    null: { pattern: /\bnull\b/, alias: "keyword" }
+};
+
+Prism.languages.yaml = {
+    comment: /#.*/,
+    key: { pattern: /(^[ \t]*|[{,][ \t]*)(?:[^\s:]|:[^\s])+(?=\s*:)/m, lookbehind: !0, alias: "property" },
+    string: { pattern: /(["'])(?:\\.|(?!\1)[^\\\r\n])*\1/, greedy: !0 },
+    number: /[+-]?(?:0x[\da-f]+|0o[0-7]+|(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?|\.inf|\.nan)/i,
+    boolean: /\b(?:false|true|off|on|no|yes)\b/i,
+    null: /\b(?:null|~)\b/i,
+    punctuation: /---|[:[\]{},|>?*&!]/
+};
+Prism.languages.yml = Prism.languages.yaml;
+
+Prism.languages.sql = {
+    comment: { pattern: /(^|[^\\])(?:--.*|\/\*[\s\S]*?\*\/)/, lookbehind: !0, greedy: !0 },
+    string: { pattern: /(^|[^@])'(?:''|[^'\r\n])*'/, lookbehind: !0, greedy: !0 },
+    keyword: /\b(?:ADD|ALL|ALTER|AND|ANY|AS|ASC|AUTHORIZATION|BACKUP|BEGIN|BETWEEN|BREAK|BROWSE|BULK|BY|CASCADE|CASE|CHECK|CHECKPOINT|CLOSE|CLUSTERED|COALESCE|COLLATE|COLUMN|COMMIT|COMPUTE|CONSTRAINT|CONTAINS|CONTAINSTABLE|CONTINUE|CONVERT|CREATE|CROSS|CURRENT|CURRENT_DATE|CURRENT_TIME|CURRENT_TIMESTAMP|CURRENT_USER|CURSOR|DATABASE|DBCC|DEALLOCATE|DECLARE|DEFAULT|DELETE|DENY|DESC|DISK|DISTINCT|DISTRIBUTED|DOUBLE|DROP|DUMP|ELSE|END|ERRLVL|ESCAPE|EXCEPT|EXEC|EXECUTE|EXISTS|EXIT|EXTERNAL|FETCH|FILE|FILLFACTOR|FOR|FOREIGN|FREETEXT|FREETEXTTABLE|FROM|FULL|FUNCTION|GOTO|GRANT|GROUP|HAVING|HOLDLOCK|IDENTITY|IDENTITYCOL|IDENTITY_INSERT|IF|IN|INDEX|INNER|INSERT|INTERSECT|INTO|IS|JOIN|KEY|KILL|LEFT|LIKE|LINENO|LOAD|MERGE|NATIONAL|NOCHECK|NONCLUSTERED|NOT|NULL|NULLIF|OF|OFF|OFFSETS|ON|OPEN|OPENDATASOURCE|OPENQUERY|OPENROWSET|OPENXML|OPTION|OR|ORDER|OUTER|OVER|PERCENT|PIVOT|PLAN|PRECISION|PRIMARY|PRINT|PROC|PROCEDURE|PUBLIC|RAISERROR|READ|READTEXT|RECONFIGURE|REFERENCES|REPLICATION|RESTORE|RESTRICT|RETURN|REVERT|REVOKE|RIGHT|ROLLBACK|ROWCOUNT|ROWGUIDCOL|RULE|SAVE|SCHEMA|SECURITYAUDIT|SELECT|SEMANTICKEYPHRASETABLE|SEMANTICSIMILARITYDETAILSTABLE|SEMANTICSIMILARITYTABLE|SESSION_USER|SET|SETUSER|SHUTDOWN|SOME|STATISTICS|SYSTEM_USER|TABLE|TABLESAMPLE|TEXTSIZE|THEN|TO|TOP|TRAN|TRANSACTION|TRIGGER|TRUNCATE|TRY_CONVERT|TSEQUAL|UNION|UNIQUE|UNPIVOT|UPDATE|UPDATETEXT|USE|USER|VALUES|VARYING|VIEW|WAITFOR|WHEN|WHERE|WHILE|WITH|WITHIN GROUP|WRITETEXT)\b/i,
+    boolean: /\b(?:FALSE|NULL|TRUE)\b/i,
+    number: /\b0x[\da-f]+\b|\b\d+(?:\.\d*)?|\B\.\d+\b/i,
+    operator: /[-+*\/=%^~]|&&?|\|\|?|!=?|<(?:=>?|<|>)?|>[>=]?/,
+    punctuation: /[;[\](),.:]/
+};
+
+Prism.languages.rust = Prism.languages.extend("clike", {
+    keyword: /\b(?:Self|abstract|as|async|await|become|box|break|const|continue|crate|do|dyn|else|enum|extern|false|final|fn|for|if|impl|in|let|loop|macro|match|mod|move|mut|override|priv|pub|ref|return|safe|self|static|struct|super|trait|true|try|type|typeof|union|unsafe|unsized|use|virtual|where|while|yield|i8|i16|i32|i64|i128|isize|u8|u16|u32|u64|u128|usize|f32|f64|str|char|bool)\b/,
+    punctuation: /[{}[\];(),.:]|->|=>/
+});
+
+Prism.languages.go = Prism.languages.extend("clike", {
+    keyword: /\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go|goto|if|import|interface|map|package|range|return|select|struct|switch|type|var|bool|byte|complex64|complex128|error|float32|float64|int|int8|int16|int32|int64|rune|string|uint|uint8|uint16|uint32|uint64|uintptr)\b/,
+    boolean: /\b(?:nil|true|false)\b/
+});
+
+Prism.languages.diff = {
+    "diff-del": { pattern: /^-.*/m, alias: "deleted" },
+    "diff-add": { pattern: /^\+.*/m, alias: "inserted" },
+    comment: { pattern: /^@@.*/m, alias: "variable" }
+};
+
+  </script>
+  <script>
+/* FlashRead Webview Client Application */
+
+(function() {
+    'use strict';
+
+    const ALERT_ICONS = {
+        note: `<svg viewBox="0 0 16 16" version="1.1"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>`,
+        tip: `<svg viewBox="0 0 16 16" version="1.1"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.09-.107-.18-.214-.27-.32C3.2 7.784 2.5 6.74 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.49-.7 2.534-1.326 3.272a8.456 8.456 0 0 0-.812 1c-.207.3-.33.565-.37.847a.75.75 0 0 1-1.484-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5Zm1 3h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1 0-1.5Z"></path></svg>`,
+        important: `<svg viewBox="0 0 16 16" version="1.1"><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25 13H9.06l-2.573 2.573A1.458 1.458 0 0 1 4 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0 .138.112.25.25.25h3a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h5.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25Zm6.47 2.22a.75.75 0 0 1 .78 0 .75.75 0 0 1 .38.65v3a.75.75 0 0 1-1.5 0v-3a.75.75 0 0 1 .34-.65Zm0 6.03a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>`,
+        warning: `<svg viewBox="0 0 16 16" version="1.1"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>`,
+        caution: `<svg viewBox="0 0 16 16" version="1.1"><path d="M4.47.22A.749.749 0 0 1 5 0h6c.199 0 .389.079.53.22l4.25 4.25c.141.14.22.331.22.53v6a.749.749 0 0 1-.22.53l-4.25 4.25A.749.749 0 0 1 11 16H5a.749.749 0 0 1-.53-.22L.22 11.53A.749.749 0 0 1 0 11V5c0-.199.079-.389.22-.53Zm.84 1.28L1.5 5.31v5.38l3.81 3.81h5.38l3.81-3.81V5.31L10.69 1.5ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>`
+    };
+
+    function postToHost(msg) {
+        if (window.chrome && window.chrome.webview) {
+            window.chrome.webview.postMessage(msg);
+        }
+    }
+
+    function enhanceCodeBlocks(container) {
+        const preElements = container.querySelectorAll('pre');
+        preElements.forEach((pre) => {
+            if (pre.closest('.code-card')) return;
+
+            const code = pre.querySelector('code');
+            const rawText = code ? code.textContent : pre.textContent;
+            
+            let lang = 'text';
+            if (code && code.className) {
+                const match = code.className.match(/(?:language|lang)-([\w+-]+)/i);
+                if (match) lang = match[1].toLowerCase();
+            }
+
+            let prismLang = lang;
+            if (lang === 'c++' || lang === 'cpp' || lang === 'cc' || lang === 'cxx' || lang === 'h' || lang === 'hpp') prismLang = 'cpp';
+            else if (lang === 'py' || lang === 'python3') prismLang = 'python';
+            else if (lang === 'js' || lang === 'mjs' || lang === 'cjs') prismLang = 'javascript';
+            else if (lang === 'ts') prismLang = 'typescript';
+            else if (lang === 'rs') prismLang = 'rust';
+            else if (lang === 'sh' || lang === 'shell' || lang === 'zsh') prismLang = 'bash';
+            else if (lang === 'yml') prismLang = 'yaml';
+            else if (lang === 'golang') prismLang = 'go';
+
+            // Generate line numbers
+            const lines = rawText.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+            if (lines.length > 0 && lines[lines.length - 1] === '') {
+                lines.pop();
+            }
+            const lineCount = Math.max(1, lines.length);
+            let lineNumsHtml = '';
+            for (let i = 1; i <= lineCount; ++i) {
+                lineNumsHtml += i + '\n';
+            }
+
+            // Create card wrapper
+            const card = document.createElement('div');
+            card.className = 'code-card';
+
+            const header = document.createElement('div');
+            header.className = 'code-card-header';
+
+            const headerLeft = document.createElement('div');
+            headerLeft.className = 'code-card-header-left';
+
+            const dots = document.createElement('div');
+            dots.className = 'mac-dots';
+            dots.innerHTML = '<span class="mac-dot red"></span><span class="mac-dot yellow"></span><span class="mac-dot green"></span>';
+
+            const tag = document.createElement('div');
+            tag.className = 'code-lang-tag';
+            tag.innerHTML = `<span>${lang}</span>`;
+
+            headerLeft.appendChild(dots);
+            headerLeft.appendChild(tag);
+
+            const copySvg = `<svg viewBox="0 0 16 16" version="1.1"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path></svg>`;
+
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'code-copy-btn';
+            copyBtn.innerHTML = `${copySvg}<span>Copy</span>`;
+            copyBtn.setAttribute('title', '复制代码');
+
+            copyBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(rawText).then(() => {
+                    copyBtn.classList.add('copied');
+                    copyBtn.innerHTML = `<span>✓</span><span>Copied!</span>`;
+                    setTimeout(() => {
+                        copyBtn.classList.remove('copied');
+                        copyBtn.innerHTML = `${copySvg}<span>Copy</span>`;
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Clipboard copy failed:', err);
+                });
+            });
+
+            header.appendChild(headerLeft);
+            header.appendChild(copyBtn);
+
+            const body = document.createElement('div');
+            body.className = 'code-card-body';
+
+            const lineNumsCol = document.createElement('div');
+            lineNumsCol.className = 'line-numbers-col';
+            lineNumsCol.textContent = lineNumsHtml;
+
+            const contentCol = document.createElement('div');
+            contentCol.className = 'code-content-col';
+
+            const newPre = document.createElement('pre');
+            const newCode = document.createElement('code');
+            newCode.className = `language-${prismLang}`;
+            newCode.textContent = rawText;
+            newPre.appendChild(newCode);
+            contentCol.appendChild(newPre);
+
+            body.appendChild(lineNumsCol);
+            body.appendChild(contentCol);
+
+            card.appendChild(header);
+            card.appendChild(body);
+
+            pre.parentNode.replaceChild(card, pre);
+
+            // Highlight with Prism
+            if (window.Prism && Prism.languages[prismLang]) {
+                Prism.highlightElement(newCode);
+            } else if (window.Prism && Prism.languages.clike) {
+                Prism.highlightElement(newCode);
+            }
+        });
+    }
+
+    function enhanceCallouts(container) {
+        const quotes = container.querySelectorAll('blockquote');
+        quotes.forEach(quote => {
+            const firstP = quote.querySelector('p');
+            if (!firstP) return;
+
+            const text = firstP.textContent.trim();
+            const match = text.match(/^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/i);
+            if (match) {
+                const type = match[1].toLowerCase();
+                quote.className = `markdown-alert markdown-alert-${type}`;
+                
+                // Remove [!TYPE] from text
+                firstP.innerHTML = firstP.innerHTML.replace(/^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*<br\s*\/?>?/i, '')
+                                                 .replace(/^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*/i, '');
+                
+                // Add header with icon
+                const header = document.createElement('div');
+                header.className = 'markdown-alert-title';
+                header.innerHTML = `${ALERT_ICONS[type] || ''} <span>${type.toUpperCase()}</span>`;
+                quote.insertBefore(header, firstP);
+            }
+        });
+    }
+
+    let headingObserver = null;
+    function setupHeadingObserver(container) {
+        if (headingObserver) {
+            headingObserver.disconnect();
+        }
+
+        const headings = container.querySelectorAll('h1, h2, h3');
+        if (headings.length === 0) return;
+
+        headingObserver = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id || entry.target.textContent.trim();
+                    postToHost({ type: 'headingVisible', id: id });
+                    break;
+                }
+            }
+        }, {
+            root: null,
+            rootMargin: '0px 0px -70% 0px',
+            threshold: 0.1
+        });
+
+        headings.forEach(h => {
+            if (!h.id) {
+                h.id = 'heading-' + encodeURIComponent(h.textContent.trim().toLowerCase().replace(/\s+/g, '-'));
+            }
+            headingObserver.observe(h);
+        });
+    }
+
+    // Intercept clicks on links
+    document.addEventListener('click', (e) => {
+        const a = e.target.closest('a');
+        if (!a) return;
+
+        const href = a.getAttribute('href');
+        if (!href) return;
+
+        if (href.startsWith('#')) {
+            e.preventDefault();
+            const targetId = href.substring(1);
+            const targetEl = document.getElementById(targetId) || document.querySelector(`[name="${targetId}"]`);
+            if (targetEl) {
+                targetEl.scrollIntoView({ behavior: 'smooth' });
+            }
+        } else if (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('mailto:')) {
+            e.preventDefault();
+            postToHost({ type: 'openExternal', url: href });
+        }
+    });
+
+    // Scroll progress reporter
+    let scrollTimeout = null;
+    window.addEventListener('scroll', () => {
+        if (scrollTimeout) return;
+        scrollTimeout = setTimeout(() => {
+            scrollTimeout = null;
+            const scrollMax = document.documentElement.scrollHeight - window.innerHeight;
+            if (scrollMax > 0) {
+                const progress = Math.max(0, Math.min(1.0, window.scrollY / scrollMax));
+                postToHost({ type: 'scrollProgress', progress: progress });
+            }
+        }, 60);
+    });
+
+    // Public API for C++ host
+    window.updateDocument = function(htmlContent, themeId, scrollPos) {
+        const container = document.getElementById('markdown-container');
+        if (!container) return;
+
+        if (themeId) {
+            document.documentElement.setAttribute('data-theme', themeId);
+        }
+
+        container.innerHTML = htmlContent;
+        enhanceCodeBlocks(container);
+        enhanceCallouts(container);
+        setupHeadingObserver(container);
+
+        if (typeof scrollPos === 'number' && scrollPos >= 0) {
+            window.scrollTo({ top: scrollPos, behavior: 'instant' });
+        }
+    };
+
+    window.setTheme = function(themeId) {
+        document.documentElement.setAttribute('data-theme', themeId);
+    };
+
+    window.scrollToHeading = function(titleOrId) {
+        const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        for (const h of headings) {
+            if (h.id === titleOrId || h.textContent.trim() === titleOrId.trim()) {
+                h.scrollIntoView({ behavior: 'smooth' });
+                return true;
+            }
+        }
+        return false;
+    };
+
+    window.scrollToProgress = function(progress) {
+        const scrollMax = document.documentElement.scrollHeight - window.innerHeight;
+        if (scrollMax > 0) {
+            window.scrollTo({ top: scrollMax * progress, behavior: 'smooth' });
+        }
+    };
+
+    if (window.__latestDoc && window.__latestDoc.html) {
+        window.updateDocument(window.__latestDoc.html, window.__latestDoc.theme);
+    }
+
+    // Ready signal
+    postToHost({ type: 'webviewReady' });
+
+})();
+
+  </script>
+</body>
+</html>
+)HTML_TEMPLATE";
+}
