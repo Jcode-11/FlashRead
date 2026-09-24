@@ -68,6 +68,46 @@ QVariantList DocumentController::outline() const
     return m_outline;
 }
 
+bool DocumentController::isModified() const
+{
+    return m_isModified;
+}
+
+int DocumentController::wordCount() const
+{
+    if (m_content.isEmpty()) return 0;
+    int count = 0;
+    bool inWord = false;
+    for (const QChar &ch : m_content) {
+        if (ch.isLetterOrNumber()) {
+            if (!inWord) {
+                inWord = true;
+                count++;
+            }
+        } else if (ch.script() == QChar::Script_Han) {
+            count++;
+            inWord = false;
+        } else {
+            inWord = false;
+        }
+    }
+    return count;
+}
+
+int DocumentController::lineCount() const
+{
+    if (m_content.isEmpty()) return 0;
+    return m_content.count('\n') + 1;
+}
+
+void DocumentController::setModified(bool modified)
+{
+    if (m_isModified != modified) {
+        m_isModified = modified;
+        emit modifiedChanged();
+    }
+}
+
 void DocumentController::openUrl(const QUrl &url)
 {
     if (!url.isLocalFile()) {
@@ -160,7 +200,108 @@ void DocumentController::openPath(const QString &path)
             m_truncated = res.truncated;
             m_outline = std::move(res.outline);
             m_isLoading = false;
+            m_isModified = false;
+            emit modifiedChanged();
             emit documentChanged();
+            emit documentLoaded();
         }, Qt::QueuedConnection);
     });
 }
+
+void DocumentController::newUntitled(const QString &defaultTitle)
+{
+    ++m_currentRequestId;
+    m_filePath.clear();
+    m_title = defaultTitle.isEmpty() ? tr("未命名.md") : defaultTitle;
+    QString baseName = QFileInfo(m_title).completeBaseName();
+    m_content = QStringLiteral("# %1\n\n在此开始编写内容...\n").arg(baseName);
+    m_renderedContent = MarkdownRenderer::render(m_content.toUtf8());
+    m_statusMessage = tr("草稿");
+    m_truncated = false;
+    m_isLoading = false;
+    m_outline.clear();
+    m_outline.append(QVariantMap {
+        {"title", baseName},
+        {"level", 1},
+        {"progress", 0.0}
+    });
+    m_isModified = true;
+    emit modifiedChanged();
+    emit documentChanged();
+    emit documentLoaded();
+}
+
+void DocumentController::updateContent(const QString &newContent)
+{
+    m_content = newContent;
+    m_renderedContent = MarkdownRenderer::render(newContent.toUtf8());
+
+    m_outline.clear();
+    const QRegularExpression headingExpression(
+        QStringLiteral(R"(^(#{1,6})\s+(.+?)\s*#*\s*$)"),
+        QRegularExpression::MultilineOption
+    );
+    QRegularExpressionMatchIterator it = headingExpression.globalMatch(m_content);
+    while (it.hasNext()) {
+        const auto match = it.next();
+        m_outline.append(QVariantMap {
+            {"title", match.captured(2).trimmed()},
+            {"level", match.captured(1).size()},
+            {"progress", m_content.isEmpty() ? 0.0 : static_cast<double>(match.capturedStart()) / m_content.size()}
+        });
+    }
+
+    if (!m_isModified) {
+        m_isModified = true;
+        emit modifiedChanged();
+    }
+    emit documentChanged();
+}
+
+bool DocumentController::saveContent(const QString &content)
+{
+    if (m_filePath.isEmpty()) {
+        return false;
+    }
+    QFile file(m_filePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return false;
+    }
+    file.write(content.toUtf8());
+    file.close();
+
+    m_content = content;
+    m_renderedContent = MarkdownRenderer::render(content.toUtf8());
+    m_statusMessage = tr("已保存");
+    m_isModified = false;
+    emit modifiedChanged();
+    emit documentChanged();
+    return true;
+}
+
+bool DocumentController::saveCurrentDocument()
+{
+    return saveContent(m_content);
+}
+
+bool DocumentController::saveContentAs(const QString &newPath, const QString &content)
+{
+    if (newPath.isEmpty()) return false;
+    QFile file(newPath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return false;
+    }
+    file.write(content.toUtf8());
+    file.close();
+
+    openPath(newPath);
+    return true;
+}
+
+void DocumentController::reload()
+{
+    if (!m_filePath.isEmpty()) {
+        openPath(m_filePath);
+    }
+}
+

@@ -18,6 +18,9 @@ class WorkspaceController final : public QObject
     Q_PROPERTY(QVariantList folderFiles READ folderFiles NOTIFY workspaceChanged)
     Q_PROPERTY(QString selectedFolder READ selectedFolder NOTIFY workspaceChanged)
     Q_PROPERTY(bool folderViewActive READ folderViewActive NOTIFY workspaceChanged)
+    Q_PROPERTY(bool hasActiveFolder READ hasActiveFolder NOTIFY workspaceChanged)
+    Q_PROPERTY(bool folderExpanded READ folderExpanded WRITE setFolderExpanded NOTIFY folderExpandedChanged)
+    Q_PROPERTY(QString currentFolderPath READ currentFolderPath NOTIFY workspaceChanged)
     Q_PROPERTY(QString themeId READ themeId WRITE setThemeId NOTIFY themeChanged)
     Q_PROPERTY(int sidebarWidth READ sidebarWidth WRITE setSidebarWidth NOTIFY sidebarWidthChanged)
     Q_PROPERTY(bool sidebarVisible READ sidebarVisible WRITE setSidebarVisible NOTIFY sidebarVisibleChanged)
@@ -33,6 +36,10 @@ public:
     QVariantList folderFiles() const;
     QString selectedFolder() const;
     bool folderViewActive() const;
+    bool hasActiveFolder() const;
+    bool folderExpanded() const;
+    void setFolderExpanded(bool expanded);
+    QString currentFolderPath() const;
     QString themeId() const;
     int sidebarWidth() const;
     bool sidebarVisible() const;
@@ -42,12 +49,21 @@ public:
     Q_INVOKABLE void openFolderDocument(const QString &path);
     Q_INVOKABLE void openFolder(const QString &path);
     Q_INVOKABLE void toggleFolder(const QString &path);
+    Q_INVOKABLE void toggleFolderExpanded();
     Q_INVOKABLE void removeFolder(const QString &path);
     Q_INVOKABLE void removeRecentFile(const QString &path);
     Q_INVOKABLE void removeHistoryItem(const QString &path);
+    Q_INVOKABLE void clearRecent();
     Q_INVOKABLE void copyPath(const QString &path);
     Q_INVOKABLE void revealPath(const QString &path);
     Q_INVOKABLE QVariantList searchRecent(const QString &query) const;
+    Q_INVOKABLE bool createFile(const QString &folderPath, const QString &fileName);
+    Q_INVOKABLE bool createFolder(const QString &parentPath, const QString &folderName);
+    Q_INVOKABLE bool renamePath(const QString &oldPath, const QString &newName);
+    Q_INVOKABLE bool deletePath(const QString &path);
+    Q_INVOKABLE void refreshWorkspace();
+    Q_INVOKABLE void newUntitledDocument();
+    Q_INVOKABLE void closeWorkspaceFolder();
     Q_INVOKABLE void setThemeId(const QString &themeId);
     Q_INVOKABLE void setSidebarWidth(int width);
     Q_INVOKABLE void setSidebarVisible(bool visible);
@@ -57,6 +73,7 @@ signals:
     void themeChanged();
     void sidebarWidthChanged();
     void sidebarVisibleChanged();
+    void folderExpandedChanged();
 
 private:
     void addFolder(const QString &path);
@@ -76,6 +93,7 @@ private:
     QString m_expandedFolder;
     QString m_workspaceFilePath;
     bool m_folderViewActive = false;
+    bool m_folderExpanded = true;
     QString m_themeId = QStringLiteral("github-light");
     int m_sidebarWidth = 240;
     bool m_sidebarVisible = true;

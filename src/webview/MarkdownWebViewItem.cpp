@@ -204,10 +204,6 @@ void MarkdownWebViewItem::sendContentToWebview()
     ).arg(jsonStr);
 
     executeScript(script);
-
-    QTimer::singleShot(600, this, [this]() {
-        capturePreviewToFile(QStringLiteral("C:/Users/Administrator/.gemini/antigravity/brain/3fd8f9a7-b14b-4528-8d54-9636b3461bf3/screen_capture.png"));
-    });
 }
 
 void MarkdownWebViewItem::handleWebMessage(const QString &messageJson)
@@ -232,9 +228,6 @@ void MarkdownWebViewItem::handleWebMessage(const QString &messageJson)
     } else if (type == QStringLiteral("headingVisible")) {
         QString id = obj.value(QStringLiteral("id")).toString();
         emit headingReached(id);
-        QTimer::singleShot(300, this, [this]() {
-            capturePreviewToFile(QStringLiteral("C:/Users/Administrator/.gemini/antigravity/brain/3fd8f9a7-b14b-4528-8d54-9636b3461bf3/screen_capture.png"));
-        });
     } else if (type == QStringLiteral("scrollProgress")) {
         m_scrollProgress = obj.value(QStringLiteral("progress")).toDouble();
         emit scrollProgressChanged();

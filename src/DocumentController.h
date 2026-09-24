@@ -17,6 +17,9 @@ class DocumentController final : public QObject
     Q_PROPERTY(bool truncated READ truncated NOTIFY documentChanged)
     Q_PROPERTY(bool isLoading READ isLoading NOTIFY documentChanged)
     Q_PROPERTY(QVariantList outline READ outline NOTIFY documentChanged)
+    Q_PROPERTY(bool isModified READ isModified WRITE setModified NOTIFY modifiedChanged)
+    Q_PROPERTY(int wordCount READ wordCount NOTIFY documentChanged)
+    Q_PROPERTY(int lineCount READ lineCount NOTIFY documentChanged)
 
 public:
     explicit DocumentController(QObject *parent = nullptr);
@@ -29,12 +32,24 @@ public:
     [[nodiscard]] bool truncated() const;
     [[nodiscard]] bool isLoading() const;
     [[nodiscard]] QVariantList outline() const;
+    [[nodiscard]] bool isModified() const;
+    [[nodiscard]] int wordCount() const;
+    [[nodiscard]] int lineCount() const;
 
     Q_INVOKABLE void openUrl(const QUrl &url);
     void openPath(const QString &path);
+    Q_INVOKABLE void newUntitled(const QString &defaultTitle = QString());
+    Q_INVOKABLE void updateContent(const QString &newContent);
+    Q_INVOKABLE bool saveContent(const QString &content);
+    Q_INVOKABLE bool saveContentAs(const QString &newPath, const QString &content);
+    Q_INVOKABLE bool saveCurrentDocument();
+    Q_INVOKABLE void setModified(bool modified);
+    Q_INVOKABLE void reload();
 
 signals:
     void documentChanged();
+    void modifiedChanged();
+    void documentLoaded();
 
 private:
     QString m_content;
@@ -44,6 +59,7 @@ private:
     QString m_statusMessage;
     bool m_truncated = false;
     bool m_isLoading = false;
+    bool m_isModified = false;
     QVariantList m_outline;
     std::atomic<quint64> m_currentRequestId {0};
 };

@@ -103,12 +103,14 @@ QVariantList WorkspaceController::workspaceItems() const
         const QFileInfo folderInfo(m_expandedFolder);
         const bool available = folderInfo.isDir();
         items.append(QVariantMap {{"title", displayName(folderInfo)}, {"path", folderInfo.absoluteFilePath()},
-            {"type", "workspaceFolder"}, {"available", available}, {"expanded", true}});
+            {"type", "workspaceFolder"}, {"available", available}, {"expanded", m_folderExpanded}});
         if (!available) return items;
-        for (const QVariant &file : m_folderFiles) {
-            const QVariantMap fileItem = file.toMap();
-            items.append(QVariantMap {{"title", fileItem.value("title")}, {"path", fileItem.value("path")},
-                {"type", "folderFile"}, {"kind", fileItem.value("kind")}, {"available", true}});
+        if (m_folderExpanded) {
+            for (const QVariant &file : m_folderFiles) {
+                const QVariantMap fileItem = file.toMap();
+                items.append(QVariantMap {{"title", fileItem.value("title")}, {"path", fileItem.value("path")},
+                    {"type", "folderFile"}, {"kind", fileItem.value("kind")}, {"available", true}});
+            }
         }
         return items;
     }
@@ -143,6 +145,22 @@ QString WorkspaceController::workspaceTitle() const
 QVariantList WorkspaceController::folderFiles() const { return m_folderFiles; }
 QString WorkspaceController::selectedFolder() const { return m_selectedFolder; }
 bool WorkspaceController::folderViewActive() const { return m_folderViewActive; }
+bool WorkspaceController::hasActiveFolder() const { return !m_expandedFolder.isEmpty() && QFileInfo(m_expandedFolder).isDir(); }
+bool WorkspaceController::folderExpanded() const { return m_folderExpanded; }
+void WorkspaceController::setFolderExpanded(bool expanded)
+{
+    if (m_folderExpanded == expanded) return;
+    m_folderExpanded = expanded;
+    emit folderExpandedChanged();
+    emit workspaceChanged();
+}
+void WorkspaceController::toggleFolderExpanded()
+{
+    m_folderExpanded = !m_folderExpanded;
+    emit folderExpandedChanged();
+    emit workspaceChanged();
+}
+QString WorkspaceController::currentFolderPath() const { return m_expandedFolder; }
 QString WorkspaceController::themeId() const { return m_themeId; }
 
 void WorkspaceController::handleUrl(const QUrl &url)
@@ -156,6 +174,10 @@ void WorkspaceController::handleUrl(const QUrl &url)
 void WorkspaceController::openPath(const QString &path)
 {
     const QFileInfo fileInfo(path);
+    if (fileInfo.isDir()) {
+        openFolder(fileInfo.absoluteFilePath());
+        return;
+    }
     m_folderViewActive = false;
     if (!fileInfo.isFile()) {
         m_documentController->openPath(path);
@@ -164,9 +186,6 @@ void WorkspaceController::openPath(const QString &path)
     }
     m_documentController->openPath(fileInfo.absoluteFilePath());
     m_workspaceFilePath = fileInfo.absoluteFilePath();
-    m_selectedFolder.clear();
-    m_expandedFolder.clear();
-    m_folderFiles.clear();
     rememberFile(fileInfo.absoluteFilePath());
     emit workspaceChanged();
 }
@@ -182,15 +201,11 @@ void WorkspaceController::openFolderDocument(const QString &path)
     }
 
     m_documentController->openPath(fileInfo.absoluteFilePath());
+    rememberFile(fileInfo.absoluteFilePath());
     emit workspaceChanged();
 }
 
 void WorkspaceController::openFolder(const QString &path)
-{
-    toggleFolder(path);
-}
-
-void WorkspaceController::toggleFolder(const QString &path)
 {
     const QFileInfo folderInfo(path);
     if (!folderInfo.isDir()) return;
@@ -199,16 +214,23 @@ void WorkspaceController::toggleFolder(const QString &path)
     touchRecent(normalizedPath, "folder", false);
     m_folderViewActive = false;
     m_workspaceFilePath.clear();
-    if (m_expandedFolder == normalizedPath) {
-        m_expandedFolder.clear();
-        m_selectedFolder.clear();
-        m_folderFiles.clear();
-    } else {
-        m_expandedFolder = normalizedPath;
-        m_selectedFolder = normalizedPath;
-        refreshFolderFiles();
-    }
+    m_expandedFolder = normalizedPath;
+    m_selectedFolder = normalizedPath;
+    m_folderExpanded = true;
+    refreshFolderFiles();
     emit workspaceChanged();
+}
+
+void WorkspaceController::toggleFolder(const QString &path)
+{
+    const QFileInfo folderInfo(path);
+    if (!folderInfo.isDir()) return;
+    const QString normalizedPath = folderInfo.absoluteFilePath();
+    if (m_expandedFolder == normalizedPath) {
+        toggleFolderExpanded();
+        return;
+    }
+    openFolder(normalizedPath);
 }
 
 void WorkspaceController::removeFolder(const QString &path)
@@ -267,6 +289,15 @@ void WorkspaceController::removeHistoryItem(const QString &path)
     QTimer::singleShot(0, this, [this]() { saveSettings(); });
 }
 
+void WorkspaceController::clearRecent()
+{
+    m_recentEntries.clear();
+    m_visibleEntries.clear();
+    m_recentFilePaths.clear();
+    emit workspaceChanged();
+    QTimer::singleShot(0, this, [this]() { saveSettings(); });
+}
+
 void WorkspaceController::copyPath(const QString &path)
 {
     QGuiApplication::clipboard()->setText(QFileInfo(path).absoluteFilePath());
@@ -298,6 +329,158 @@ QVariantList WorkspaceController::searchRecent(const QString &query) const
         if (matches.size() == 12) break;
     }
     return matches;
+}
+
+bool WorkspaceController::createFile(const QString &folderPath, const QString &fileName)
+{
+    QString folder = folderPath.trimmed();
+    if (folder.isEmpty()) {
+        folder = m_expandedFolder;
+    }
+    if (folder.isEmpty() || !QFileInfo(folder).isDir()) {
+        return false;
+    }
+
+    QString name = fileName.trimmed();
+    if (name.isEmpty()) return false;
+    if (!name.endsWith(QStringLiteral(".md"), Qt::CaseInsensitive)
+        && !name.endsWith(QStringLiteral(".markdown"), Qt::CaseInsensitive)
+        && !name.endsWith(QStringLiteral(".txt"), Qt::CaseInsensitive)) {
+        name += QStringLiteral(".md");
+    }
+
+    QDir dir(folder);
+    QString fullPath = dir.filePath(name);
+    QFileInfo checkInfo(fullPath);
+    if (checkInfo.exists()) {
+        openFolderDocument(fullPath);
+        return true;
+    }
+
+    QFile file(fullPath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return false;
+    }
+
+    QString baseTitle = QFileInfo(name).completeBaseName();
+    QString initialContent = QStringLiteral("# %1\n\n在此开始编写内容...\n").arg(baseTitle);
+    file.write(initialContent.toUtf8());
+    file.close();
+
+    refreshFolderFiles();
+    emit workspaceChanged();
+    openFolderDocument(fullPath);
+    return true;
+}
+
+bool WorkspaceController::createFolder(const QString &parentPath, const QString &folderName)
+{
+    QString parentDir = parentPath.trimmed();
+    if (parentDir.isEmpty()) {
+        parentDir = m_expandedFolder;
+    }
+    if (parentDir.isEmpty() || !QFileInfo(parentDir).isDir()) {
+        return false;
+    }
+
+    QString name = folderName.trimmed();
+    if (name.isEmpty()) return false;
+
+    QDir dir(parentDir);
+    if (!dir.mkdir(name)) {
+        return false;
+    }
+
+    refreshFolderFiles();
+    emit workspaceChanged();
+    return true;
+}
+
+bool WorkspaceController::renamePath(const QString &oldPath, const QString &newName)
+{
+    QFileInfo oldInfo(oldPath);
+    if (!oldInfo.exists()) return false;
+
+    QString cleanNewName = newName.trimmed();
+    if (cleanNewName.isEmpty()) return false;
+
+    if (oldInfo.isFile() && !cleanNewName.contains('.')) {
+        cleanNewName += QStringLiteral(".") + oldInfo.suffix();
+    }
+
+    QDir parentDir = oldInfo.dir();
+    QString newPath = parentDir.filePath(cleanNewName);
+    if (QFileInfo::exists(newPath)) return false;
+
+    bool ok = false;
+    if (oldInfo.isDir()) {
+        ok = parentDir.rename(oldInfo.fileName(), cleanNewName);
+        if (ok && m_expandedFolder == oldInfo.absoluteFilePath()) {
+            m_expandedFolder = newPath;
+            m_selectedFolder = newPath;
+        }
+    } else {
+        ok = QFile::rename(oldInfo.absoluteFilePath(), newPath);
+        if (ok && m_documentController && m_documentController->filePath() == oldInfo.absoluteFilePath()) {
+            m_documentController->openPath(newPath);
+        }
+    }
+
+    if (ok) {
+        refreshFolderFiles();
+        emit workspaceChanged();
+    }
+    return ok;
+}
+
+bool WorkspaceController::deletePath(const QString &path)
+{
+    QFileInfo info(path);
+    if (!info.exists()) return false;
+
+    bool ok = false;
+    if (info.isDir()) {
+        ok = QDir(path).removeRecursively();
+        if (ok && m_expandedFolder == info.absoluteFilePath()) {
+            m_expandedFolder.clear();
+            m_selectedFolder.clear();
+        }
+    } else {
+        ok = QFile::remove(path);
+        if (ok && m_documentController && m_documentController->filePath() == info.absoluteFilePath()) {
+            m_documentController->openPath(QString());
+        }
+    }
+
+    if (ok) {
+        refreshFolderFiles();
+        emit workspaceChanged();
+    }
+    return ok;
+}
+
+void WorkspaceController::refreshWorkspace()
+{
+    if (!m_expandedFolder.isEmpty()) {
+        refreshFolderFiles();
+        emit workspaceChanged();
+    }
+}
+
+void WorkspaceController::newUntitledDocument()
+{
+    if (m_documentController) {
+        m_documentController->newUntitled();
+    }
+}
+
+void WorkspaceController::closeWorkspaceFolder()
+{
+    m_expandedFolder.clear();
+    m_selectedFolder.clear();
+    m_folderFiles.clear();
+    m_folderExpanded = true;
+    emit workspaceChanged();
 }
 
 void WorkspaceController::setThemeId(const QString &themeId)
